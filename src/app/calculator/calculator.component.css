@@ -1,0 +1,47 @@
+h3 {
+  margin: 10px;
+}
+
+.view_button {
+  width: 70px;
+  border-radius: 20px;
+  border: 0px;
+  margin: 3px;
+}
+
+.vector, .matrix {
+  margin: 5px;
+  letter-spacing: -.36em;
+}
+
+.matrix_input, .vector_input_1, .vector_input_2 {
+  border: 0px;
+  width: 30px;
+  margin: 1px;
+  padding: 0px;
+}
+
+.calc_buttons {
+  margin-top: 10px;
+}
+
+.calc_button {
+  width: 40px;
+  border-radius: 20px;
+  border: 0px;
+  margin: 3px;
+}
+
+.result_div {
+  width: 350px;
+  text-align: center;
+}
+
+#increase_matrix, #decrease_matrix, #increase_vector, #decrease_vector {
+  width: 150px;
+}
+
+#result_area {
+  width: 150px;
+  height: 50px;
+}
