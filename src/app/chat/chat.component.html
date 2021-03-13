@@ -3,7 +3,7 @@
     <h1 id="chat_h1">Чат</h1>
     <textarea id="chat" rows="10" cols="45" readonly></textarea>
     <div>
-        <input type="text" id="textLine">
-        <input type="button" id="sendText" value="Отправить сообщение">
+        <input type="text" id="textLine" [(ngModel)]="message">
+        <input type="button" id="sendText" value="Отправить сообщение" (click)="testFunc()">
     </div>
 </div>

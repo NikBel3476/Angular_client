@@ -16,7 +16,7 @@ import { AuthorizationComponent } from './authorization/authorization.component'
   imports: [
     BrowserModule,
     AppRoutingModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,6 +1,21 @@
-<form class="box" action="index.html" method="POST">
+<header>
+    <div>
+        <input type="button" id="sign_in_button" value='sign in' (click)="setType('authorization')">
+        <input type="button" id="sing_up_button" value="sign up" (click)="setType('registration')">
+    </div>
+</header>
+
+<form class="box" action="index.html" method="POST" *ngIf="type === 'authorization'">
     <h1>Login</h1>
-    <input type="text" name="" placeholder="Username">
-    <input type="password" name="" placeholder="Password">
-    <input type="submit" value="Login">
+    <input type="text" name="Login" placeholder="Login" [(ngModel)]="user.login">
+    <input type="password" name="Password" placeholder="Password" [(ngModel)]="user.password">
+    <input type="submit" value="Login" (click)="authorization()">
+</form>
+
+<form class="box" action="index.html" method="POST" *ngIf="type === 'registration'">
+    <h1>Registration</h1>
+    <input type="text" name="Login" placeholder="Login" [(ngModel)]="user.login">
+    <input type="text" name="Nick" placeholder="Username" [(ngModel)]="user.nickname">
+    <input type="password" name="Password" placeholder="Password" [(ngModel)]="user.password">
+    <input type="submit" value="Registration" (click)="registration()">
 </form>
