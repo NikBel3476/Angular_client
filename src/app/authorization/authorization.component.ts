@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 import { User } from '../user';
 import { Server } from '../server/Server';
@@ -10,7 +11,7 @@ import { Server } from '../server/Server';
 })
 export class AuthorizationComponent implements OnInit {
 
-  server = new Server;
+  server = new Server();
 
   user: User = {
     login: '',
@@ -18,10 +19,12 @@ export class AuthorizationComponent implements OnInit {
     password: ''
   }
 
+  token: string = '';
+
   type: string = 'authorization';
 
-  constructor() {
-
+  constructor(private router: Router) {
+    
   }
 
   ngOnInit(): void {
