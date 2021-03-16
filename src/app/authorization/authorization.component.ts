@@ -6,12 +6,13 @@ import { Server } from '../server/Server';
 
 @Component({
   selector: 'app-authorization',
+  template: '<com1 #com1></com1><com2 (myEvent)="com1.function1()"></com2>',
   templateUrl: './authorization.component.html',
   styleUrls: ['./authorization.component.css']
 })
 export class AuthorizationComponent implements OnInit {
 
-  server = new Server();
+  server = new Server(this);
 
   user: User = {
     login: '',
@@ -43,4 +44,7 @@ export class AuthorizationComponent implements OnInit {
     this.server.registration(this.user);
   }
 
+  redirectToGame = () => {
+    this.router.navigate(['game']);
+  }
 }
