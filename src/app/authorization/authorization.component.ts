@@ -1,18 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { ServerService } from '../server.service';
 
 import { User } from '../user';
-import { Server } from '../server/Server';
 
 @Component({
   selector: 'app-authorization',
-  template: '<com1 #com1></com1><com2 (myEvent)="com1.function1()"></com2>',
   templateUrl: './authorization.component.html',
-  styleUrls: ['./authorization.component.css']
+  styleUrls: ['./authorization.component.css'],
+})
+@Injectable({
+  providedIn: 'root'
 })
 export class AuthorizationComponent implements OnInit {
-
-  server = new Server(this);
 
   user: User = {
     login: '',
@@ -21,12 +21,15 @@ export class AuthorizationComponent implements OnInit {
   }
 
   token: string = '';
-
   type: string = 'authorization';
 
-  constructor(private router: Router) {
-    
+  EVENTS = this.serverService.getEvents();
+
+  constructor(private router: Router, private serverService: ServerService) {
+    serverService.on(this.EVENTS.LOGIN, (data: any) => this.onGetToken(data))
+    serverService.on(this.EVENTS.REGISTRATION, (data: any) => this.onGetToken(data))
   }
+
 
   ngOnInit(): void {
   }
@@ -36,15 +39,18 @@ export class AuthorizationComponent implements OnInit {
     this.type = type;
   }
 
-  authorization = () => {
-    this.server.login(this.user);
+  authorization() {
+    this.serverService.login(this.user);
   }
 
-  registration = () => {
-    this.server.registration(this.user);
+  registration() {
+    this.serverService.registration(this.user);
   }
 
-  redirectToGame = () => {
-    this.router.navigate(['game']);
+  onGetToken (data: any) {
+    if (typeof data === 'string') {
+      localStorage.setItem('token', data);
+      this.router.navigate(['game']);
+    }
   }
 }
