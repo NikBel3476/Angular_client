@@ -24,12 +24,10 @@ export class ChatComponent implements OnInit {
   chat = "";
 
   sendMessage() {
-    console.log(this.message);
     this.serverService.sendMessage(this.message);
   }
 
   getMessage(data: any) {
-    console.log('olololololololo');
     if (data.message && data.messageTime && data.login) {
         this.chat += data.messageTime + '\n' + data.login + ': ' + data.message + '\n';
     };

@@ -15,24 +15,6 @@ export class Server {
   MESSAGES = SETTINGS.MESSAGES;
 
   constructor(private socket: Socket) {
-    /* this.socket = io(`${this.HOST}:${this.PORT}`);
-    if (this.socket) {
-      console.log('socket connected');
-    }; */
-
-    // authorization
-    /* this.socket.on(this.MESSAGES.LOGIN, (data: any) => {
-      if (data) {
-        localStorage.setItem('token', data);
-      }
-    });
-
-    // registration
-    this.socket.on(this.MESSAGES.REGISTRATION, (data: any) => {
-      if (data) {
-        localStorage.setItem('token', data);
-      }
-    }); */
 
     Object.keys(this.EVENTS).forEach(key => this.events[this.EVENTS[key]] = []);
 
@@ -42,6 +24,8 @@ export class Server {
       this.fireEvent(this.EVENTS.REGISTRATION, data));
     this.socket.on(this.EVENTS.GET_MESSAGE, (data: any) =>
       this.fireEvent(this.EVENTS.GET_MESSAGE, data));
+
+    this.socket.on('connect', () => console.log('sockets connected'));
   }
 
   EVENTS: { [key: string]: string } = {

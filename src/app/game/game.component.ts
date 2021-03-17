@@ -54,7 +54,6 @@ export class GameComponent implements OnInit {
     light.position.set(3, 3, 3);
     light.target.position.set(0, 0, 0);
     light.castShadow = true;
-    //light.PointLightShadow();
     this.scene.add(light);
     this.scene.add(light.target);
 
@@ -110,10 +109,6 @@ export class GameComponent implements OnInit {
       emissive: 0x000000,
       specular: 0xbcbcbc
     })
-   /*  const material = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
-      side: THREE.DoubleSide
-    }); */
     const plane = new THREE.Mesh(geometry, material);
     plane.rotateX(Math.PI / 2);
     plane.rotateY(Math.PI);
