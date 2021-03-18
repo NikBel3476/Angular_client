@@ -40,7 +40,6 @@ export class GameComponent implements OnInit {
     this.animate();
   }
 
-
   ngOnInit(): void {
     if (!localStorage.getItem('token')) {
       this.router.navigate(['authorization']);

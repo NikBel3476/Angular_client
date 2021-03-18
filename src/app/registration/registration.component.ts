@@ -5,35 +5,39 @@ import { ServerService } from '../server.service';
 import { User } from '../user';
 
 @Component({
-  selector: 'app-authorization',
-  templateUrl: './authorization.component.html',
-  styleUrls: ['./authorization.component.css'],
+  selector: 'app-registration',
+  templateUrl: './registration.component.html',
+  styleUrls: ['./registration.component.css']
 })
-export class AuthorizationComponent implements OnInit {
+@Injectable({
+  providedIn: 'root'
+})
+export class RegistrationComponent implements OnInit {
 
   user: User = {
     login: '',
+    nickname: '',
     password: ''
   }
 
   EVENTS = this.serverService.getEvents();
 
   constructor(private router: Router, private serverService: ServerService) {
-    serverService.on(this.EVENTS.LOGIN, (data: any) => this.onGetToken(data))
+    serverService.on(this.EVENTS.REGISTRATION, (data: any) => this.onGetToken(data))
   }
 
   ngOnInit(): void {
   }
 
-  authorization() {
-    this.serverService.login(this.user);
-    delete this.user.password;
+  registration() {
+    this.serverService.registration(this.user);
   }
 
-  onGetToken (data: any) {
+  onGetToken(data: any) {
     if (typeof data === 'string') {
       localStorage.setItem('token', data);
       this.router.navigate(['game']);
     }
   }
+
 }
