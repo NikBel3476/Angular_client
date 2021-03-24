@@ -1,8 +1,13 @@
+*{
+    box-sizing: border-box;
+}
+
 input {
     outline: none;
 }
 
 .chat_container {
+    position: absolute;
     margin-top: 15px;
     width: 350px;
     text-align: center;

@@ -1,6 +1,8 @@
 <header>
-    <div>
+    <div class="header_div" >
         <input type="button" id="logout_button" value="logout" (click)="logout()" routerLink="/authorization">
     </div>
 </header>
-<app-chat></app-chat>
+<app-chat *ngIf="chatIsVisible"></app-chat>
+
+<!-- *ngIf="logOutVisible" -->

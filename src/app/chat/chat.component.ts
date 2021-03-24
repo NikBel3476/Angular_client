@@ -14,7 +14,7 @@ export class ChatComponent implements OnInit {
   EVENTS = this.serverService.getEvents();
 
   constructor(private serverService: ServerService) {
-    serverService.on(this.EVENTS.GET_MESSAGE, (data: any) => this.getMessage(data))
+    serverService.on(this.EVENTS.GET_MESSAGE, (data: any) => this.getMessage(data));
   }
 
   ngOnInit(): void {

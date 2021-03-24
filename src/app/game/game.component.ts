@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as THREE from 'three';
 
@@ -8,8 +8,26 @@ import * as THREE from 'three';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-  
-  // инициализация 
+
+  // обработка нажатия клавиши
+  @HostListener('document:keydown', ['$event'])
+    keyEvent(event: KeyboardEvent) {
+    if (event.key === 't') {
+      this.chatIsVisible = true;
+    }
+    if (event.key === 'Escape') {
+      if(this.chatIsVisible === true) {
+        this.chatIsVisible = false;
+      } else {
+        console.log('You open Menu!')
+      }
+    }
+  }
+
+  // показать/скрыть чат
+  chatIsVisible = false; 
+
+  // инициализация three.js
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
   renderer = new THREE.WebGLRenderer( /* { antialias: true } */ );
