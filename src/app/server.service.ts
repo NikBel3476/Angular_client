@@ -30,4 +30,8 @@ export class ServerService {
   sendMessage(message: String) {
     this.server.sendMessage(message);
   }
+
+  logout() {
+    this.server.logout();
+  }
 }

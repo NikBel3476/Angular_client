@@ -11,6 +11,7 @@ import { AuthorizationComponent } from './authorization/authorization.component'
 import { GameComponent } from './game/game.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { HeaderComponent } from './header/header.component';
+import { LogoutComponent } from './logout/logout.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3001/', options: {} };
 
@@ -21,7 +22,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/', options: {} };
     AuthorizationComponent,
     GameComponent,
     RegistrationComponent,
-    HeaderComponent
+    HeaderComponent,
+    LogoutComponent
   ],
   imports: [
     BrowserModule,

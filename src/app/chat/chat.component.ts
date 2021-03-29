@@ -28,8 +28,8 @@ export class ChatComponent implements OnInit {
   }
 
   getMessage(data: any) {
-    if (data.message && data.messageTime && data.login) {
-        this.chat += data.messageTime + '\n' + data.login + ': ' + data.message + '\n';
+    if (data.message && data.login) {
+        this.chat += data.login + ': ' + data.message + '\n';
     };
   }
   

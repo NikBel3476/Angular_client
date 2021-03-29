@@ -30,7 +30,7 @@ export class AuthorizationComponent implements OnInit {
     delete this.user.password;
   }
 
-  onGetToken (data: any) {
+  onGetToken(data: any) {
     if (typeof data === 'string') {
       localStorage.setItem('token', data);
       this.router.navigate(['game']);

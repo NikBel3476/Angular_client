@@ -147,11 +147,6 @@ export class GameComponent implements OnInit {
     this.renderer.render( this.scene, this.camera );
   }
 
-  logout() {
-    localStorage.clear();
-    document.querySelector('canvas')?.remove();
-  }
-
   ngOnDestroy() {
     document.querySelector('canvas')?.remove();
   }

@@ -22,18 +22,21 @@ export class Server {
       this.fireEvent(this.EVENTS.LOGIN, data));
     this.socket.on(this.EVENTS.REGISTRATION, (data: any) =>
       this.fireEvent(this.EVENTS.REGISTRATION, data));
+    this.socket.on(this.EVENTS.LOGOUT, (data: any) =>
+      this.fireEvent(this.EVENTS.LOGOUT, data));
     this.socket.on(this.EVENTS.GET_MESSAGE, (data: any) =>
       this.fireEvent(this.EVENTS.GET_MESSAGE, data));
-
+  
     this.socket.on('connect', () => console.log('sockets connected'));
   }
 
   EVENTS: { [key: string]: string } = {
     REGISTRATION: "REGISTRATION",
     LOGIN: "LOGIN",
+    LOGOUT: "LOGOUT",
     GET_MESSAGE: "GET_MESSAGE"
   };
-
+  
   events: { [key: string]: any[] } = {};
 
   private fireEvent(name: string, data: any) {
@@ -73,6 +76,13 @@ export class Server {
       const passHash = Md5.hashStr(login + password);
       const token = Md5.hashStr(passHash + String(num));
       this.socket.emit(this.MESSAGES.REGISTRATION, { login, nickname, passHash, token, num });
+    }
+  }
+
+  logout() {
+    const token = localStorage.getItem('token');
+    if (token) {
+      this.socket.emit(this.MESSAGES.LOGOUT, token);
     }
   }
 

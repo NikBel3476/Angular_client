@@ -7,6 +7,7 @@ export const SETTINGS = {
         GET_MESSAGE: 'GET_MESSAGE', // получить все сообщения
         SEND_MESSAGE: 'SEND_MESSAGE', // послать сообщение
         LOGIN: 'LOGIN',
+        LOGOUT: 'LOGOUT',
         REGISTRATION: 'REGISTRATION'
     }
 };
