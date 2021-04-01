@@ -11,16 +11,18 @@ export class GameComponent implements OnInit {
 
   // обработка нажатия клавиши
   @HostListener('document:keydown', ['$event'])
-    keyEvent(event: KeyboardEvent) {
-    if (event.key === 't') {
-      this.chatIsVisible = true;
-    }
-    if (event.key === 'Escape') {
-      if(this.chatIsVisible === true) {
-        this.chatIsVisible = false;
-      } else {
-        console.log('You open Menu!')
-      }
+  keyEvent(event: KeyboardEvent) {
+    switch(event.key) {
+      case 't':
+        this.chatIsVisible = true;
+      break;
+      case 'Escape':
+        if(this.chatIsVisible === true) {
+          this.chatIsVisible = false;
+        } else {
+          console.log('You open Menu!')
+        };
+      break;
     }
   }
 

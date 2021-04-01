@@ -26,6 +26,10 @@ export class Server {
       this.fireEvent(this.EVENTS.LOGOUT, data));
     this.socket.on(this.EVENTS.GET_MESSAGE, (data: any) =>
       this.fireEvent(this.EVENTS.GET_MESSAGE, data));
+    this.socket.on(this.EVENTS.USER_ONLINE, (data: any) =>
+      this.fireEvent(this.EVENTS.USER_ONLINE, data));
+    this.socket.on(this.EVENTS.USER_OFFLINE, (data: any) =>
+      this.fireEvent(this.EVENTS.USER_OFFLINE, data));
   
     this.socket.on('connect', () => console.log('sockets connected'));
   }
@@ -34,7 +38,9 @@ export class Server {
     REGISTRATION: "REGISTRATION",
     LOGIN: "LOGIN",
     LOGOUT: "LOGOUT",
-    GET_MESSAGE: "GET_MESSAGE"
+    GET_MESSAGE: "GET_MESSAGE",
+    USER_ONLINE: "USER_ONLINE",
+    USER_OFFLINE: "USER_OFFLINE"
   };
   
   events: { [key: string]: any[] } = {};
