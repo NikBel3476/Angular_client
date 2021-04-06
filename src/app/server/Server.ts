@@ -30,6 +30,14 @@ export class Server {
       this.fireEvent(this.EVENTS.USER_ONLINE, data));
     this.socket.on(this.EVENTS.USER_OFFLINE, (data: any) =>
       this.fireEvent(this.EVENTS.USER_OFFLINE, data));
+    this.socket.on(this.EVENTS.CREATE_ROOM, (data: any) =>
+      this.fireEvent(this.EVENTS.CREATE_ROOM, data));
+    this.socket.on(this.EVENTS.JOIN_ROOM, (data: any) =>
+      this.fireEvent(this.EVENTS.JOIN_ROOM, data));
+    this.socket.on(this.EVENTS.LEAVE_ROOM, (data: any) =>
+      this.fireEvent(this.EVENTS.LEAVE_ROOM, data));
+    this.socket.on(this.EVENTS.GET_ROOMS, (data: any) =>
+      this.fireEvent(this.EVENTS.GET_ROOMS, data));
   
     this.socket.on('connect', () => console.log('sockets connected'));
   }
@@ -40,7 +48,11 @@ export class Server {
     LOGOUT: "LOGOUT",
     GET_MESSAGE: "GET_MESSAGE",
     USER_ONLINE: "USER_ONLINE",
-    USER_OFFLINE: "USER_OFFLINE"
+    USER_OFFLINE: "USER_OFFLINE",
+    CREATE_ROOM: "CREATE_ROOM",
+    JOIN_ROOM: "JOIN_ROOM",
+    LEAVE_ROOM: "LEAVE_ROOM",
+    GET_ROOMS: "GET_ROOMS"
   };
   
   events: { [key: string]: any[] } = {};
@@ -51,9 +63,9 @@ export class Server {
         if (event instanceof Function) {
           event(data);
         }
-      })
+      });
     }
-  };
+  }
 
   on(name: string, func: any) {
     if (name && this.events[name] && func instanceof Function) {
@@ -98,4 +110,21 @@ export class Server {
       this.socket.emit(this.MESSAGES.SEND_MESSAGE, { message, token });
     }
   }
+
+  createRoom(roomName: string) {
+      this.socket.emit(this.MESSAGES.CREATE_ROOM, roomName);
+  }
+
+  leaveRoom(roomName: string) {
+    this.socket.emit(this.MESSAGES.LEAVE_ROOM, roomName);
+  }
+
+  joinRoom(roomName: string) {
+      this.socket.emit(this.MESSAGES.JOIN_ROOM, roomName);
+  }
+
+  getRooms() {
+    this.socket.emit(this.MESSAGES.GET_ROOMS);
+  }
+
 }

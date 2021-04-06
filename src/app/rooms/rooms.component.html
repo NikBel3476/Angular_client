@@ -1,0 +1,22 @@
+<app-logout></app-logout>
+<div class="rooms_main_wrapper">
+    <div>
+        <h1>Rooms</h1>
+    </div>
+    <div class="input_wrapper">
+        <span>Создать комнату</span>
+        <input type="text" placeholder="Название комнаты" id="1" [(ngModel)]="roomName">
+        <input type="button" id="roomInput" value="Создать комнату" (click)="createRoom()">
+    </div>
+    <div class="refresh_rooms">
+        <input type="button" value="Обновить" (click)="getRooms()">
+    </div>
+    <div class="rooms_wrapper">
+        <ul class="rooms">
+            <li *ngFor="let room of rooms">
+                <span>{{room}}</span>
+                <input type="button" id="select_room" value="Войти в комнату" (click)="joinRoom(room)">
+            </li>
+        </ul>
+    </div>
+</div>

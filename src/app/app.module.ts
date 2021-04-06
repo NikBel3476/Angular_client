@@ -12,6 +12,7 @@ import { GameComponent } from './game/game.component';
 import { RegistrationComponent } from './registration/registration.component';
 import { HeaderComponent } from './header/header.component';
 import { LogoutComponent } from './logout/logout.component';
+import { RoomsComponent } from './rooms/rooms.component';
 
 const config: SocketIoConfig = { url: 'http://localhost:3001/', options: {} };
 
@@ -23,7 +24,8 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/', options: {} };
     GameComponent,
     RegistrationComponent,
     HeaderComponent,
-    LogoutComponent
+    LogoutComponent,
+    RoomsComponent
   ],
   imports: [
     BrowserModule,
@@ -34,6 +36,7 @@ const config: SocketIoConfig = { url: 'http://localhost:3001/', options: {} };
       {path: 'game', component: GameComponent},
       {path: 'authorization', component: AuthorizationComponent},
       {path: 'registration', component: RegistrationComponent},
+      {path: 'rooms', component: RoomsComponent},
       {path: '', redirectTo: '/authorization', pathMatch: 'full'},
       {path: '**', redirectTo: '/authorization', pathMatch: 'full'}
     ])

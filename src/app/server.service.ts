@@ -34,4 +34,21 @@ export class ServerService {
   logout() {
     this.server.logout();
   }
+
+  createRoom(roomName: string) {
+    this.server.createRoom(roomName);
+  }
+
+  joinRoom(roomName: string) {
+    this.server.joinRoom(roomName);
+  }
+
+  leaveRoom(roomName: any) {
+    this.server.leaveRoom(roomName);
+  }
+
+  getRooms() {
+    this.server.getRooms();
+  }
+
 }

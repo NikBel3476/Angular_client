@@ -1,6 +1,7 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as THREE from 'three';
+import { ServerService } from '../server.service';
 
 @Component({
   selector: 'app-game',
@@ -12,27 +13,27 @@ export class GameComponent implements OnInit {
   // обработка нажатия клавиши
   @HostListener('document:keydown', ['$event'])
   keyEvent(event: KeyboardEvent) {
-    switch(event.key) {
+    switch (event.key) {
       case 't':
         this.chatIsVisible = true;
-      break;
+        break;
       case 'Escape':
-        if(this.chatIsVisible === true) {
+        if (this.chatIsVisible) {
           this.chatIsVisible = false;
         } else {
           console.log('You open Menu!')
         };
-      break;
+        break;
     }
   }
 
   // показать/скрыть чат
-  chatIsVisible = false; 
+  chatIsVisible = false;
 
   // инициализация three.js
   scene = new THREE.Scene();
-  camera = new THREE.PerspectiveCamera( 75, window.innerWidth/window.innerHeight, 0.1, 1000 );
-  renderer = new THREE.WebGLRenderer( /* { antialias: true } */ );
+  camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  renderer = new THREE.WebGLRenderer( /* { antialias: true } */);
 
   cube = this.createCube();
   sphere = this.createSphere();
@@ -43,12 +44,17 @@ export class GameComponent implements OnInit {
     this.sphere,
     this.plane
   ];
- 
-  constructor(private router: Router) {
+
+  EVENTS = this.serverService.getEvents();
+
+  room: string = "";
+
+  constructor(private router: Router,  private serverService: ServerService) {
+    serverService.on(this.EVENTS.LEAVE_ROOM, (result: any) => this.onLeaveRoom(result));
     // инициализация игры
-    this.renderer.setSize( window.innerWidth, window.innerHeight );
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.setClearColor('#808080');
-    document.body.appendChild( this.renderer.domElement );
+    document.body.appendChild(this.renderer.domElement);
     this.camera.position.y = 10;
     this.camera.position.z = 30;
     this.camera.position.x = -10;
@@ -66,9 +72,20 @@ export class GameComponent implements OnInit {
     }
   }
 
+  leaveRoom() {
+    this.serverService.leaveRoom(localStorage.getItem('room'));
+  }
+
+  onLeaveRoom(data: any) {
+    if (data.result) {
+      this.router.navigate(['rooms']);
+      localStorage.removeItem('room');
+    }
+  }
+
   addLight() {
     this.renderer.shadowMap.enabled = true;
-    const light = new THREE.DirectionalLight( 0xffffff, 0.75);
+    const light = new THREE.DirectionalLight(0xffffff, 0.75);
     light.shadow.autoUpdate = true;
     light.position.set(3, 3, 3);
     light.target.position.set(0, 0, 0);
@@ -78,14 +95,14 @@ export class GameComponent implements OnInit {
 
     const lightHelper = new THREE.DirectionalLightHelper(light);
     this.scene.add(lightHelper);
-    
+
     // const helper = new THREE.CameraHelper( light.shadow.camera );
     // this.scene.add( helper );
   }
- 
+
   addAmbientLight() {
-    const light = new THREE.AmbientLight( 0xffffff, 0.25 );
-    this.scene.add( light );
+    const light = new THREE.AmbientLight(0xffffff, 0.25);
+    this.scene.add(light);
   }
 
   initElems() {
@@ -93,7 +110,7 @@ export class GameComponent implements OnInit {
   }
 
   createCube() {
-    const geometry = new THREE.TorusGeometry( 1.5, 0.5, 8, 20);
+    const geometry = new THREE.TorusGeometry(1.5, 0.5, 8, 20);
     const material = new THREE.MeshStandardMaterial({
       color: 0xfcc742,
       emissive: 0x111111,
@@ -101,20 +118,20 @@ export class GameComponent implements OnInit {
       metalness: 1,
       roughness: 0.55
     });
-    const cube = new THREE.Mesh( geometry, material );
+    const cube = new THREE.Mesh(geometry, material);
     cube.castShadow = true;
     cube.receiveShadow = true;
     return cube;
   }
 
   createSphere() {
-    const geometry = new THREE.SphereGeometry( 4, 50, 50 );
+    const geometry = new THREE.SphereGeometry(4, 50, 50);
     const material = new THREE.MeshPhongMaterial({
       color: 0x0da520,
       emissive: 0x000000,
       specular: 0xbcbcbc,
     });
-    const sphere = new THREE.Mesh( geometry, material );
+    const sphere = new THREE.Mesh(geometry, material);
     sphere.position.set(-5, -5, -5);
     sphere.castShadow = true;
     sphere.receiveShadow = true;
@@ -143,10 +160,10 @@ export class GameComponent implements OnInit {
   }
 
   animate() {
-    requestAnimationFrame( this.animate.bind(this) );
+    requestAnimationFrame(this.animate.bind(this));
     this.sceneElems[0].rotation.x += 0.01;
-		this.sceneElems[0].rotation.y += 0.01;
-    this.renderer.render( this.scene, this.camera );
+    this.sceneElems[0].rotation.y += 0.01;
+    this.renderer.render(this.scene, this.camera);
   }
 
   ngOnDestroy() {

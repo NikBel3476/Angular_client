@@ -36,7 +36,7 @@ export class RegistrationComponent implements OnInit {
   onGetToken(data: any) {
     if (typeof data === 'string') {
       localStorage.setItem('token', data);
-      this.router.navigate(['game']);
+      this.router.navigate(['rooms']);
     }
   }
 
