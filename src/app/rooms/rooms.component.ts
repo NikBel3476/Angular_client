@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ServerService } from '../server.service';
-import { Injectable } from "@angular/core";
 
 @Component({
   selector: 'app-rooms',

@@ -8,9 +8,6 @@
         <input type="text" placeholder="Название комнаты" id="1" [(ngModel)]="roomName">
         <input type="button" id="roomInput" value="Создать комнату" (click)="createRoom()">
     </div>
-    <div class="refresh_rooms">
-        <input type="button" value="Обновить" (click)="getRooms()">
-    </div>
     <div class="rooms_wrapper">
         <ul class="rooms">
             <li *ngFor="let room of rooms">
