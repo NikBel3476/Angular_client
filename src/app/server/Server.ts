@@ -82,8 +82,8 @@ export class Server {
     if (login && password) {
       const num = Math.round(Math.random() * 1000000);
       const passHash = Md5.hashStr(login + password);
-      const token = Md5.hashStr(passHash + String(num));
-      this.socket.emit(this.MESSAGES.LOGIN, { login, passHash, token, num });
+      const hash = Md5.hashStr(passHash + String(num));
+      this.socket.emit(this.MESSAGES.LOGIN, { login, hash, num });
     }
   }
 
