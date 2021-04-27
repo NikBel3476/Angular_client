@@ -25,7 +25,6 @@ export class RoomsComponent implements OnInit {
     } else {
       this.serverService.getRooms();
     }
-    // this.rooms = this.serverService.getRooms();
   }
 
   onCreateRoom(data: any): void {

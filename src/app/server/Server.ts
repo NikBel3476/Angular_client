@@ -90,10 +90,8 @@ export class Server {
   registration(user: User) {
     const { login, nickname, password } = user;
     if (nickname && login && password) {
-      const num = Math.round(Math.random() * 1000000);
       const passHash = Md5.hashStr(login + password);
-      const token = Md5.hashStr(passHash + String(num));
-      this.socket.emit(this.MESSAGES.REGISTRATION, { login, nickname, passHash, token, num });
+      this.socket.emit(this.MESSAGES.REGISTRATION, { login, nickname, passHash });
     }
   }
 
