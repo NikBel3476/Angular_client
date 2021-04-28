@@ -8,7 +8,7 @@ import { User } from './user';
 export class ServerService {
 
   constructor(private server: Server) {
-
+    
   }
 
   getEvents() {

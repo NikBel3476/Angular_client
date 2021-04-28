@@ -15,8 +15,8 @@ export class ChatComponent implements OnInit {
 
   constructor(private serverService: ServerService) {
     serverService.on(this.EVENTS.GET_MESSAGE, (data: any) => this.getMessage(data));
-    serverService.on(this.EVENTS.USER_ONLINE, (data: any) => this.whenUserEntered(data));
-    serverService.on(this.EVENTS.USER_OFFLINE, (data: any) => this.whenUserLeaved(data));
+    serverService.on(/* this.EVENTS.USER_ONLINE */this.EVENTS.USER_ENTER_CHAT, (name: String) => this.whenUserEntered(name));
+    serverService.on(/* this.EVENTS.USER_OFFLINE */this.EVENTS.USER_LEAVE_CHAT, (name: String) => this.whenUserLeaved(name));
   }
 
   ngOnInit(): void {
@@ -35,15 +35,15 @@ export class ChatComponent implements OnInit {
     };
   }
 
-  whenUserEntered(data: any) {
-    if (data.name && data.id) {
-      this.chat += "Пользователь: " + data.name + '\n' + "Вошёл в чат! \n";
+  whenUserEntered(name: String) {
+    if (name) {
+      this.chat += "Пользователь: " + name + '\n' + "Вошёл в чат! \n";
     };
   }
 
-  whenUserLeaved(data: any) {
-    if (data.name && data.id) {
-      this.chat += "Пользователь: " + data.name + '\n' + "Покинул в чат! \n";
+  whenUserLeaved(name: String) {
+    if (name) {
+      this.chat += "Пользователь: " + name + '\n' + "Покинул в чат! \n";
     };
   }
   

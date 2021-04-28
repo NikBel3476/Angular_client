@@ -13,8 +13,13 @@ import { RegistrationComponent } from './registration/registration.component';
 import { HeaderComponent } from './header/header.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RoomsComponent } from './rooms/rooms.component';
+import { SETTINGS } from './server/Settings';
 
-const config: SocketIoConfig = { url: 'http://localhost:3001/', options: {} };
+const config: SocketIoConfig = { url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`, options: {} };
+
+window.onbeforeunload = () => {
+  localStorage.clear();
+};
 
 @NgModule({
   declarations: [

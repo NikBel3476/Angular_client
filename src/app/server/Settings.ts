@@ -12,6 +12,6 @@ export const SETTINGS = {
         CREATE_ROOM: 'CREATE_ROOM',
         JOIN_ROOM: 'JOIN_ROOM',
         LEAVE_ROOM: 'LEAVE_ROOM',
-        GET_ROOMS: 'GET_ROOMS'
+        GET_ROOMS: 'GET_ROOMS',
     }
 };

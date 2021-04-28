@@ -26,10 +26,10 @@ export class Server {
       this.fireEvent(this.EVENTS.LOGOUT, data));
     this.socket.on(this.EVENTS.GET_MESSAGE, (data: any) =>
       this.fireEvent(this.EVENTS.GET_MESSAGE, data));
-    this.socket.on(this.EVENTS.USER_ONLINE, (data: any) =>
+    /* this.socket.on(this.EVENTS.USER_ONLINE, (data: any) =>
       this.fireEvent(this.EVENTS.USER_ONLINE, data));
     this.socket.on(this.EVENTS.USER_OFFLINE, (data: any) =>
-      this.fireEvent(this.EVENTS.USER_OFFLINE, data));
+      this.fireEvent(this.EVENTS.USER_OFFLINE, data)); */
     this.socket.on(this.EVENTS.CREATE_ROOM, (data: any) =>
       this.fireEvent(this.EVENTS.CREATE_ROOM, data));
     this.socket.on(this.EVENTS.JOIN_ROOM, (data: any) =>
@@ -38,6 +38,10 @@ export class Server {
       this.fireEvent(this.EVENTS.LEAVE_ROOM, data));
     this.socket.on(this.EVENTS.GET_ROOMS, (data: any) =>
       this.fireEvent(this.EVENTS.GET_ROOMS, data));
+    this.socket.on(this.EVENTS.USER_ENTER_CHAT, (data: any) =>
+      this.fireEvent(this.EVENTS.USER_ENTER_CHAT, data));
+    this.socket.on(this.EVENTS.USER_LEAVE_CHAT, (data: any) =>
+      this.fireEvent(this.EVENTS.USER_LEAVE_CHAT, data));
   
     this.socket.on('connect', () => console.log('sockets connected'));
   }
@@ -52,7 +56,9 @@ export class Server {
     CREATE_ROOM: "CREATE_ROOM",
     JOIN_ROOM: "JOIN_ROOM",
     LEAVE_ROOM: "LEAVE_ROOM",
-    GET_ROOMS: "GET_ROOMS"
+    GET_ROOMS: "GET_ROOMS",
+    USER_ENTER_CHAT: 'USER_ENTER_CHAT',
+    USER_LEAVE_CHAT: 'USER_LEAVE_CHAT',
   };
   
   events: { [key: string]: any[] } = {};
@@ -110,15 +116,27 @@ export class Server {
   }
 
   createRoom(roomName: string) {
-      this.socket.emit(this.MESSAGES.CREATE_ROOM, roomName);
+    const data = {
+      roomName,
+      token: localStorage.getItem('token')
+    }
+    this.socket.emit(this.MESSAGES.CREATE_ROOM, data);
   }
 
   leaveRoom(roomName: string) {
-    this.socket.emit(this.MESSAGES.LEAVE_ROOM, roomName);
+    const data = {
+      roomName,
+      token: localStorage.getItem('token')
+    }
+    this.socket.emit(this.MESSAGES.LEAVE_ROOM, data);
   }
 
   joinRoom(roomName: string) {
-      this.socket.emit(this.MESSAGES.JOIN_ROOM, roomName);
+    const data = {
+      roomName,
+      token: localStorage.getItem('token')
+    };
+    this.socket.emit(this.MESSAGES.JOIN_ROOM, data);
   }
 
   getRooms() {
