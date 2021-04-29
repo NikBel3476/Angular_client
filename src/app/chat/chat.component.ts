@@ -15,8 +15,8 @@ export class ChatComponent implements OnInit {
 
   constructor(private serverService: ServerService) {
     serverService.on(this.EVENTS.GET_MESSAGE, (data: any) => this.getMessage(data));
-    serverService.on(/* this.EVENTS.USER_ONLINE */this.EVENTS.USER_ENTER_CHAT, (name: String) => this.whenUserEntered(name));
-    serverService.on(/* this.EVENTS.USER_OFFLINE */this.EVENTS.USER_LEAVE_CHAT, (name: String) => this.whenUserLeaved(name));
+    serverService.on(this.EVENTS.USER_ENTER_CHAT, (name: String) => this.whenUserEntered(name));
+    serverService.on(this.EVENTS.USER_LEAVE_CHAT, (name: String) => this.whenUserLeaved(name));
   }
 
   ngOnInit(): void {

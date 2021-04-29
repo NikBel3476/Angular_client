@@ -30,10 +30,6 @@ export class Server {
       this.fireEvent(this.EVENTS.LOGOUT, data));
     this.socket.on(this.EVENTS.GET_MESSAGE, (data: any) =>
       this.fireEvent(this.EVENTS.GET_MESSAGE, data));
-    /* this.socket.on(this.EVENTS.USER_ONLINE, (data: any) =>
-      this.fireEvent(this.EVENTS.USER_ONLINE, data));
-    this.socket.on(this.EVENTS.USER_OFFLINE, (data: any) =>
-      this.fireEvent(this.EVENTS.USER_OFFLINE, data)); */
     this.socket.on(this.EVENTS.CREATE_ROOM, (data: any) =>
       this.fireEvent(this.EVENTS.CREATE_ROOM, data));
     this.socket.on(this.EVENTS.JOIN_ROOM, (data: any) =>
@@ -114,8 +110,9 @@ export class Server {
 
   sendMessage(message: String) {
     if (message) {
-      const token = this.cookieService.get('token');
-      this.socket.emit(this.MESSAGES.SEND_MESSAGE, { message, token });
+      const token = localStorage.getItem('token');
+      const room = String(localStorage.getItem('room'));
+      this.socket.emit(this.MESSAGES.SEND_MESSAGE, { message, token, room});
     }
   }
 
