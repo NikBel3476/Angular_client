@@ -1,5 +1,6 @@
 import { Component, Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { ServerService } from '../server.service';
 
 import { User } from '../user';
@@ -18,7 +19,11 @@ export class AuthorizationComponent implements OnInit {
 
   EVENTS = this.serverService.getEvents();
 
-  constructor(private router: Router, private serverService: ServerService) {
+  constructor(
+    private router: Router,
+    private serverService: ServerService,
+    private cookieService: CookieService
+    ) {
     serverService.on(this.EVENTS.LOGIN, (data: any) => this.onGetToken(data))
   }
 
@@ -30,9 +35,9 @@ export class AuthorizationComponent implements OnInit {
     delete this.user.password;
   }
 
-  onGetToken(data: any) {
-    if (typeof data === 'string') {
-      localStorage.setItem('token', data);
+  onGetToken(token: String) {
+    if (typeof token === 'string') {
+      this.cookieService.set('token', token);
       this.router.navigate(['rooms']);
     }
   }

@@ -1,5 +1,6 @@
 import { Md5 } from "ts-md5/dist/md5";
 import { Socket } from 'ngx-socket-io';
+import { CookieService } from 'ngx-cookie-service';
 
 import { SETTINGS } from "./Settings";
 import { User } from '../user';
@@ -14,7 +15,10 @@ export class Server {
   PORT = SETTINGS.PORT;
   MESSAGES = SETTINGS.MESSAGES;
 
-  constructor(private socket: Socket) {
+  constructor(
+    private socket: Socket,
+    private cookieService: CookieService
+    ) {
 
     Object.keys(this.EVENTS).forEach(key => this.events[this.EVENTS[key]] = []);
 
@@ -102,7 +106,7 @@ export class Server {
   }
 
   logout() {
-    const token = localStorage.getItem('token');
+    const token = this.cookieService.get('token');
     if (token) {
       this.socket.emit(this.MESSAGES.LOGOUT, token);
     }
@@ -110,7 +114,7 @@ export class Server {
 
   sendMessage(message: String) {
     if (message) {
-      const token = localStorage.getItem('token');
+      const token = this.cookieService.get('token');
       this.socket.emit(this.MESSAGES.SEND_MESSAGE, { message, token });
     }
   }
@@ -118,7 +122,7 @@ export class Server {
   createRoom(roomName: string) {
     const data = {
       roomName,
-      token: localStorage.getItem('token')
+      token: this.cookieService.get('token')
     }
     this.socket.emit(this.MESSAGES.CREATE_ROOM, data);
   }
@@ -126,7 +130,7 @@ export class Server {
   leaveRoom(roomName: string) {
     const data = {
       roomName,
-      token: localStorage.getItem('token')
+      token: this.cookieService.get('token')
     }
     this.socket.emit(this.MESSAGES.LEAVE_ROOM, data);
   }
@@ -134,7 +138,7 @@ export class Server {
   joinRoom(roomName: string) {
     const data = {
       roomName,
-      token: localStorage.getItem('token')
+      token: this.cookieService.get('token')
     };
     this.socket.emit(this.MESSAGES.JOIN_ROOM, data);
   }

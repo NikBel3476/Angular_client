@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { CookieService } from 'ngx-cookie-service';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -16,10 +17,6 @@ import { RoomsComponent } from './rooms/rooms.component';
 import { SETTINGS } from './server/Settings';
 
 const config: SocketIoConfig = { url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`, options: {} };
-
-window.onbeforeunload = () => {
-  localStorage.clear();
-};
 
 @NgModule({
   declarations: [
@@ -46,7 +43,7 @@ window.onbeforeunload = () => {
       {path: '**', redirectTo: '/authorization', pathMatch: 'full'}
     ])
   ],
-  providers: [],
+  providers: [CookieService],
   bootstrap: [AppComponent]
 })
 

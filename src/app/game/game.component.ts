@@ -1,5 +1,6 @@
 import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import * as THREE from 'three';
 import { ServerService } from '../server.service';
 
@@ -49,7 +50,11 @@ export class GameComponent implements OnInit {
 
   room: string = "";
 
-  constructor(private router: Router,  private serverService: ServerService) {
+  constructor(
+    private router: Router,
+    private serverService: ServerService,
+    private cookieService: CookieService
+    ) {
     serverService.on(this.EVENTS.LEAVE_ROOM, (result: any) => this.onLeaveRoom(result));
     // инициализация игры
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -67,7 +72,7 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!localStorage.getItem('token')) {
+    if (!this.cookieService.get('token')) {
       this.router.navigate(['authorization']);
     }
   }

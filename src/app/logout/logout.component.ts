@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { CookieService } from 'ngx-cookie-service';
 import { ServerService } from '../server.service';
 
 @Component({
@@ -11,7 +12,11 @@ export class LogoutComponent implements OnInit {
 
   EVENTS = this.serverService.getEvents();
 
-  constructor(private router: Router, private serverService: ServerService) {
+  constructor(
+    private router: Router,
+    private serverService: ServerService,
+    private cookieSevice: CookieService
+    ) {
     serverService.on(this.EVENTS.LOGOUT, (result: any) => this.onLogout(result));
   }
 
@@ -24,7 +29,7 @@ export class LogoutComponent implements OnInit {
 
   onLogout(result: any) {
     if (result) {
-      localStorage.removeItem('token');
+      this.cookieSevice.delete('token');
       this.router.navigate(['authorization']);
     }
   }
