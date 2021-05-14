@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Direction } from './Enum';
 import { Server } from './server/Server';
 import { User } from './user';
 
@@ -49,6 +50,10 @@ export class ServerService {
 
   getRooms() {
     this.server.getRooms();
+  }
+
+  move (direction: Direction): void {
+    this.server.move(direction);
   }
 
 }

@@ -5,6 +5,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { SETTINGS } from "./Settings";
 import { User } from '../user';
 import { Injectable } from "@angular/core";
+import { Direction } from "../Enum";
 
 @Injectable({
   providedIn: 'root'
@@ -83,6 +84,9 @@ export class Server {
     return this.EVENTS;
   }
 
+
+  // АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
+  // -------------------------
   login(user: User) {
     const { login, password } = user;
     if (login && password) {
@@ -108,6 +112,8 @@ export class Server {
     }
   }
 
+  // ЧАТ
+  // --------------------------
   sendMessage(message: String) {
     if (message) {
       const token = localStorage.getItem('token');
@@ -116,6 +122,8 @@ export class Server {
     }
   }
 
+  // КОМНАТЫ
+  // --------------------------
   createRoom(roomName: string) {
     const data = {
       roomName,
@@ -144,4 +152,11 @@ export class Server {
     this.socket.emit(this.MESSAGES.GET_ROOMS);
   }
 
+  // ИГРА
+  // -------------------------------
+  move(direction: Direction): void {
+    console.log(direction);
+    this.socket.emit(
+      this.MESSAGES.MOVE, { gameName: 'firstGame', direction, token: this.cookieService.get('token')});
+  }
 }

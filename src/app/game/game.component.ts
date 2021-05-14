@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import * as THREE from 'three';
 import { ServerService } from '../server.service';
+import { Direction } from '../Enum';
 
 @Component({
   selector: 'app-game',
@@ -10,23 +11,6 @@ import { ServerService } from '../server.service';
   styleUrls: ['./game.component.css']
 })
 export class GameComponent implements OnInit {
-
-  // обработка нажатия клавиши
-  @HostListener('document:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
-    switch (event.key) {
-      case 't':
-        this.chatIsVisible = true;
-        break;
-      case 'Escape':
-        if (this.chatIsVisible) {
-          this.chatIsVisible = false;
-        } else {
-          console.log('You open Menu!')
-        };
-        break;
-    }
-  }
 
   // показать/скрыть чат
   chatIsVisible = false;
@@ -49,6 +33,31 @@ export class GameComponent implements OnInit {
   EVENTS = this.serverService.getEvents();
 
   room: string = "";
+
+  // обработка нажатия клавиши
+  @HostListener('document:keydown', ['$event'])
+  keyEvent(event: KeyboardEvent) {
+    switch (event.key) {
+      case 't':
+        this.chatIsVisible = true;
+        break;
+      case 'Escape':
+        this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
+        break;
+      case 'w':
+        this.serverService.move(Direction.Forward);
+        break;
+      case 'a':
+        this.serverService.move(Direction.Left);
+        break;
+      case 's':
+        this.serverService.move(Direction.Back);
+        break;
+      case 'd':
+        this.serverService.move(Direction.Right);      
+        break;
+    }
+  }
 
   constructor(
     private router: Router,
