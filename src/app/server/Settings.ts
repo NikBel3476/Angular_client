@@ -14,5 +14,6 @@ export const SETTINGS = {
         LEAVE_ROOM: 'LEAVE_ROOM',
         GET_ROOMS: 'GET_ROOMS',
         MOVE: 'MOVE',
+        STOPMOVE: 'STOPMOVE',
     }
 };

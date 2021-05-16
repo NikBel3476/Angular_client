@@ -2,6 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import * as THREE from 'three';
+import * as Stats from 'stats.js';
 import { ServerService } from '../server.service';
 import { Direction } from '../Enum';
 
@@ -19,6 +20,8 @@ export class GameComponent implements OnInit {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   renderer = new THREE.WebGLRenderer( /* { antialias: true } */);
+  stats = new Stats();
+  
 
   cube = this.createCube();
   sphere = this.createSphere();
@@ -36,7 +39,7 @@ export class GameComponent implements OnInit {
 
   // обработка нажатия клавиши
   @HostListener('document:keydown', ['$event'])
-  keyEvent(event: KeyboardEvent) {
+  keyDown(event: KeyboardEvent) {
     switch (event.key) {
       case 't':
         this.chatIsVisible = true;
@@ -44,6 +47,24 @@ export class GameComponent implements OnInit {
       case 'Escape':
         this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
         break;
+      case 'w':
+        this.serverService.stopMove();
+        break;
+      case 'a':
+        this.serverService.stopMove();
+        break;
+      case 's':
+        this.serverService.stopMove();
+        break;
+      case 'd':
+        this.serverService.stopMove();      
+        break;
+    }
+  }
+
+  @HostListener('document:keyup', ['$event'])
+  keyUp(event: KeyboardEvent) {
+    switch (event.key) {
       case 'w':
         this.serverService.move(Direction.Forward);
         break;
@@ -63,7 +84,10 @@ export class GameComponent implements OnInit {
     private router: Router,
     private serverService: ServerService,
     private cookieService: CookieService
-    ) {
+  ) {
+    this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+    document.body.appendChild(this.stats.dom);
+
     serverService.on(this.EVENTS.LEAVE_ROOM, (result: any) => this.onLeaveRoom(result));
     // инициализация игры
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -78,6 +102,11 @@ export class GameComponent implements OnInit {
     this.addAmbientLight();
     this.createAxesHelper();
     this.animate();
+
+    /* setInterval(() => {
+      this.camera.position.x++;
+      this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    }, 1000); */
   }
 
   ngOnInit(): void {
@@ -174,10 +203,12 @@ export class GameComponent implements OnInit {
   }
 
   animate() {
-    requestAnimationFrame(this.animate.bind(this));
+    this.stats.begin();
     this.sceneElems[0].rotation.x += 0.01;
     this.sceneElems[0].rotation.y += 0.01;
     this.renderer.render(this.scene, this.camera);
+	  this.stats.end();
+    requestAnimationFrame(this.animate.bind(this));
   }
 
   ngOnDestroy() {

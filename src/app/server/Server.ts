@@ -155,8 +155,11 @@ export class Server {
   // ИГРА
   // -------------------------------
   move(direction: Direction): void {
-    console.log(direction);
     this.socket.emit(
       this.MESSAGES.MOVE, { gameName: 'firstGame', direction, token: this.cookieService.get('token')});
+  }
+
+  stopMove(): void {
+    this.socket.emit(this.MESSAGES.STOPMOVE);
   }
 }

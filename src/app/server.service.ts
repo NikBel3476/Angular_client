@@ -56,4 +56,8 @@ export class ServerService {
     this.server.move(direction);
   }
 
+  stopMove(): void {
+    this.server.stopMove();
+  }
+
 }
