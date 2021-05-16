@@ -15,5 +15,6 @@ export const SETTINGS = {
         GET_ROOMS: 'GET_ROOMS',
         MOVE: 'MOVE',
         STOPMOVE: 'STOPMOVE',
+        CHANGEDIRECTION: 'CHANGEDIRECTION'
     }
 };

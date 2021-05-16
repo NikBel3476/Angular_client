@@ -18,8 +18,10 @@ export class GameComponent implements OnInit {
 
   // инициализация three.js
   scene = new THREE.Scene();
+  canvas?: HTMLCanvasElement;
+  renderer: any;
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  renderer = new THREE.WebGLRenderer( /* { antialias: true } */);
+  cameraDirection = new THREE.Vector3(0, 0, 0);
   stats = new Stats();
   
 
@@ -48,24 +50,6 @@ export class GameComponent implements OnInit {
         this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
         break;
       case 'w':
-        this.serverService.stopMove();
-        break;
-      case 'a':
-        this.serverService.stopMove();
-        break;
-      case 's':
-        this.serverService.stopMove();
-        break;
-      case 'd':
-        this.serverService.stopMove();      
-        break;
-    }
-  }
-
-  @HostListener('document:keyup', ['$event'])
-  keyUp(event: KeyboardEvent) {
-    switch (event.key) {
-      case 'w':
         this.serverService.move(Direction.Forward);
         break;
       case 'a':
@@ -80,39 +64,74 @@ export class GameComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keyup', ['$event'])
+  keyUp(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'w':
+        this.serverService.stopMove();
+        break;
+      case 'a':
+        this.serverService.stopMove();
+        break;
+      case 's':
+        this.serverService.stopMove();
+        break;
+      case 'd':
+        this.serverService.stopMove();      
+        break;
+    }
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  mouseMove(event: MouseEvent) {
+    this.cameraDirection.x += event.movementX / 50;
+    this.cameraDirection.y -= event.movementY / 50;
+    this.camera.lookAt(this.cameraDirection);
+    this.serverService.changeDirection(event.movementX, -event.movementY);
+  }
+
   constructor(
     private router: Router,
     private serverService: ServerService,
     private cookieService: CookieService
   ) {
+    // stats
     this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild(this.stats.dom);
 
+    // sockets
     serverService.on(this.EVENTS.LEAVE_ROOM, (result: any) => this.onLeaveRoom(result));
+
     // инициализация игры
-    this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setClearColor('#808080');
-    document.body.appendChild(this.renderer.domElement);
+    // camera
     this.camera.position.y = 10;
     this.camera.position.z = 30;
     this.camera.position.x = -10;
-    this.camera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.camera.lookAt(this.cameraDirection);
+
+    // renderer
+    this.renderer = new THREE.WebGLRenderer();
+
+    // geometry
     this.initElems();
     this.addLight();
     this.addAmbientLight();
     this.createAxesHelper();
-    this.animate();
-
-    /* setInterval(() => {
-      this.camera.position.x++;
-      this.camera.lookAt(new THREE.Vector3(0, 0, 0));
-    }, 1000); */
   }
 
   ngOnInit(): void {
     if (!this.cookieService.get('token')) {
       this.router.navigate(['authorization']);
     }
+
+    // scene initialization
+    // renderer
+    this.canvas = document.getElementById('gameScene') as HTMLCanvasElement;
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setClearColor('#808080');
+
+    this.animate();
   }
 
   leaveRoom() {

@@ -162,4 +162,8 @@ export class Server {
   stopMove(): void {
     this.socket.emit(this.MESSAGES.STOPMOVE);
   }
+
+  changeDireciton(x: number, y: number) {
+    this.socket.emit(this.MESSAGES.CHANGEDIRECTION, { x, y });
+  }
 }

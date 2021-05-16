@@ -20,6 +20,8 @@ export class ServerService {
     this.server.on(name, func);
   }
 
+  // АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
+  // -------------------------------
   login(user: User) {
     this.server.login(user);
   }
@@ -52,6 +54,8 @@ export class ServerService {
     this.server.getRooms();
   }
 
+  // ИГРА
+  // -------------------------------
   move (direction: Direction): void {
     this.server.move(direction);
   }
@@ -60,4 +64,7 @@ export class ServerService {
     this.server.stopMove();
   }
 
+  changeDirection(x: number, y: number) {
+    this.server.changeDireciton(x, y);
+  }
 }
