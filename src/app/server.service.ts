@@ -42,8 +42,8 @@ export class ServerService {
     this.server.createRoom(roomName);
   }
 
-  joinRoom(roomName: string) {
-    this.server.joinRoom(roomName);
+  joinGame(roomName: string) {
+    this.server.joinGame(roomName);
   }
 
   leaveRoom(roomName: any) {
@@ -51,7 +51,7 @@ export class ServerService {
   }
 
   getRooms() {
-    this.server.getRooms();
+    this.server.getGames();
   }
 
   // ИГРА

@@ -10,9 +10,9 @@
     </div>
     <div class="rooms_wrapper">
         <ul class="rooms">
-            <li *ngFor="let room of rooms">
-                <span>{{room}}</span>
-                <input type="button" id="select_room" value="Войти в комнату" (click)="joinRoom(room)">
+            <li *ngFor="let game of games" class="game_info_wrapper">
+                <span class="game_info">{{game.name}} Кол-во игроков: {{game.gamersCount}}</span>
+                <input type="button" id="select_room" value="Войти в комнату" (click)="joinGame(game.name)">
             </li>
         </ul>
     </div>

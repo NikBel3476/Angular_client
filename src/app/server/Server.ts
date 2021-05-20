@@ -33,12 +33,12 @@ export class Server {
       this.fireEvent(this.EVENTS.GET_MESSAGE, data));
     this.socket.on(this.EVENTS.CREATE_ROOM, (data: any) =>
       this.fireEvent(this.EVENTS.CREATE_ROOM, data));
-    this.socket.on(this.EVENTS.JOIN_ROOM, (data: any) =>
-      this.fireEvent(this.EVENTS.JOIN_ROOM, data));
+    this.socket.on(this.EVENTS.JOIN_GAME, (data: any) =>
+      this.fireEvent(this.EVENTS.JOIN_GAME, data));
     this.socket.on(this.EVENTS.LEAVE_ROOM, (data: any) =>
       this.fireEvent(this.EVENTS.LEAVE_ROOM, data));
-    this.socket.on(this.EVENTS.GET_ROOMS, (data: any) =>
-      this.fireEvent(this.EVENTS.GET_ROOMS, data));
+    this.socket.on(this.EVENTS.GET_GAMES, (data: any) =>
+      this.fireEvent(this.EVENTS.GET_GAMES, data));
     this.socket.on(this.EVENTS.USER_ENTER_CHAT, (data: any) =>
       this.fireEvent(this.EVENTS.USER_ENTER_CHAT, data));
     this.socket.on(this.EVENTS.USER_LEAVE_CHAT, (data: any) =>
@@ -55,9 +55,9 @@ export class Server {
     USER_ONLINE: "USER_ONLINE",
     USER_OFFLINE: "USER_OFFLINE",
     CREATE_ROOM: "CREATE_ROOM",
-    JOIN_ROOM: "JOIN_ROOM",
+    JOIN_GAME: "JOIN_GAME",
     LEAVE_ROOM: "LEAVE_ROOM",
-    GET_ROOMS: "GET_ROOMS",
+    GET_GAMES: "GET_GAMES",
     USER_ENTER_CHAT: 'USER_ENTER_CHAT',
     USER_LEAVE_CHAT: 'USER_LEAVE_CHAT',
   };
@@ -140,16 +140,16 @@ export class Server {
     this.socket.emit(this.MESSAGES.LEAVE_ROOM, data);
   }
 
-  joinRoom(roomName: string) {
+  joinGame(gameName: string) {
     const data = {
-      roomName,
+      gameName,
       token: this.cookieService.get('token')
     };
-    this.socket.emit(this.MESSAGES.JOIN_ROOM, data);
+    this.socket.emit(this.MESSAGES.JOIN_GAME, data);
   }
 
-  getRooms() {
-    this.socket.emit(this.MESSAGES.GET_ROOMS);
+  getGames() {
+    this.socket.emit(this.MESSAGES.GET_GAMES);
   }
 
   // ИГРА
@@ -160,10 +160,10 @@ export class Server {
   }
 
   stopMove(): void {
-    this.socket.emit(this.MESSAGES.STOPMOVE);
+    this.socket.emit(this.MESSAGES.STOP_MOVE);
   }
 
   changeDireciton(x: number, y: number) {
-    this.socket.emit(this.MESSAGES.CHANGEDIRECTION, { x, y });
+    this.socket.emit(this.MESSAGES.CHANGE_DIRECTION, { x, y });
   }
 }
