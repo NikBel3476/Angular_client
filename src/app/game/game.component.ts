@@ -20,8 +20,10 @@ export class GameComponent implements OnInit {
   scene = new THREE.Scene();
   canvas?: HTMLCanvasElement;
   renderer: any;
+  // камера
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   cameraDirection = new THREE.Vector3(0, 0, 0);
+  // fps
   stats = new Stats();
   
 
@@ -43,23 +45,27 @@ export class GameComponent implements OnInit {
   @HostListener('document:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
     switch (event.key) {
-      case 't':
+      case 't' || 'е':
         this.chatIsVisible = true;
         break;
       case 'Escape':
         this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
         break;
-      case 'w':
+      case 'w' || 'ц':
         this.serverService.move(Direction.Forward);
+        this.camera.position.z -= 0.1;
         break;
-      case 'a':
+      case 'a' || 'ф':
         this.serverService.move(Direction.Left);
+        this.camera.position.x -= 0.1;
         break;
-      case 's':
+      case 's' || 'ы':
         this.serverService.move(Direction.Back);
+        this.camera.position.z += 0.1;
         break;
-      case 'd':
-        this.serverService.move(Direction.Right);      
+      case 'd' || 'в':
+        this.serverService.move(Direction.Right);
+        this.camera.position.x += 0.1;    
         break;
     }
   }
@@ -77,7 +83,7 @@ export class GameComponent implements OnInit {
         this.serverService.stopMove();
         break;
       case 'd':
-        this.serverService.stopMove();      
+        this.serverService.stopMove();          
         break;
     }
   }
@@ -95,6 +101,8 @@ export class GameComponent implements OnInit {
     private serverService: ServerService,
     private cookieService: CookieService
   ) {
+    // THREE.JS
+    // --------------------------------
     // stats
     this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild(this.stats.dom);
