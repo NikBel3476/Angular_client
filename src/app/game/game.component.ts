@@ -18,14 +18,19 @@ export class GameComponent implements OnInit {
 
   // инициализация three.js
   scene = new THREE.Scene();
+  clock = new THREE.Clock();
   canvas?: HTMLCanvasElement;
   renderer: any;
-  // камера
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   cameraDirection = new THREE.Vector3(0, 0, 0);
-  // fps
   stats = new Stats();
-  
+
+
+  plane1 = this.createPlane({ x: 0, y: 15, z: -30 }, { l: 50, h: 50, b: 10 }, "#FFFFFF");
+  plane2 = this.createPlane({ x: -30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 });
+  plane3 = this.createPlane({ x: 30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }, '#FF00FF');
+  plane4 = this.createPlane({ x: 0, y: 45, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB');
+  plane5 = this.createPlane({ x: 0, y: -15, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB');
 
   cube = this.createCube();
   sphere = this.createSphere();
@@ -34,7 +39,12 @@ export class GameComponent implements OnInit {
   sceneElems = [
     this.cube,
     this.sphere,
-    this.plane
+    this.plane,
+    this.plane1,
+    this.plane2,
+    this.plane4,
+    this.plane5,
+    this.plane3
   ];
 
   EVENTS = this.serverService.getEvents();
@@ -45,27 +55,23 @@ export class GameComponent implements OnInit {
   @HostListener('document:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
     switch (event.key) {
-      case 't' || 'е':
+      case 't':
         this.chatIsVisible = true;
         break;
       case 'Escape':
         this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
         break;
-      case 'w' || 'ц':
+      case 'w':
         this.serverService.move(Direction.Forward);
-        this.camera.position.z -= 0.1;
         break;
-      case 'a' || 'ф':
+      case 'a':
         this.serverService.move(Direction.Left);
-        this.camera.position.x -= 0.1;
         break;
-      case 's' || 'ы':
+      case 's':
         this.serverService.move(Direction.Back);
-        this.camera.position.z += 0.1;
         break;
-      case 'd' || 'в':
+      case 'd':
         this.serverService.move(Direction.Right);
-        this.camera.position.x += 0.1;    
         break;
     }
   }
@@ -83,15 +89,15 @@ export class GameComponent implements OnInit {
         this.serverService.stopMove();
         break;
       case 'd':
-        this.serverService.stopMove();          
+        this.serverService.stopMove();
         break;
     }
   }
 
   @HostListener('document:mousemove', ['$event'])
   mouseMove(event: MouseEvent) {
-    this.cameraDirection.x += event.movementX / 50;
-    this.cameraDirection.y -= event.movementY / 50;
+    this.cameraDirection.x += event.movementX / 25;
+    this.cameraDirection.y -= event.movementY / 25;
     this.camera.lookAt(this.cameraDirection);
     this.serverService.changeDirection(event.movementX, -event.movementY);
   }
@@ -101,8 +107,6 @@ export class GameComponent implements OnInit {
     private serverService: ServerService,
     private cookieService: CookieService
   ) {
-    // THREE.JS
-    // --------------------------------
     // stats
     this.stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
     document.body.appendChild(this.stats.dom);
@@ -112,9 +116,6 @@ export class GameComponent implements OnInit {
 
     // инициализация игры
     // camera
-    this.camera.position.y = 10;
-    this.camera.position.z = 30;
-    this.camera.position.x = -10;
     this.camera.lookAt(this.cameraDirection);
 
     // renderer
@@ -127,17 +128,66 @@ export class GameComponent implements OnInit {
     this.createAxesHelper();
   }
 
+  
+
+
   ngOnInit(): void {
     if (!this.cookieService.get('token')) {
       this.router.navigate(['authorization']);
+     
     }
 
     // scene initialization
     // renderer
     this.canvas = document.getElementById('gameScene') as HTMLCanvasElement;
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas });
+    
+    //create the scene
+    this.scene.background = new THREE.Color(0xbfd1e5);
+
+    //create camera
+    this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 5000);
+    this.camera.position.set(0, 10, 30);
+    this.camera.lookAt(new THREE.Vector3(0, 5, 0));
+
+    //Add hemisphere light
+    let hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 0.1);
+    hemiLight.color.setHSL(0.6, 0.6, 0.6);
+    hemiLight.groundColor.setHSL(0.1, 1, 0.4);
+    hemiLight.position.set(0, 50, 0);
+    this.scene.add(hemiLight);
+
+    //Add directional light
+    let dirLight = new THREE.DirectionalLight(0xffffff, 1);
+    dirLight.color.setHSL(0.1, 1, 0.95);
+    dirLight.position.set(-1, 1.75, 1);
+    dirLight.position.multiplyScalar(100);
+    this.scene.add(dirLight);
+
+    dirLight.castShadow = true;
+
+    dirLight.shadow.mapSize.width = 2048;
+    dirLight.shadow.mapSize.height = 2048;
+
+    let d = 50;
+
+    dirLight.shadow.camera.left = -d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d;
+    dirLight.shadow.camera.bottom = -d;
+
+    dirLight.shadow.camera.far = 13500;
+
+    //Setup the renderer
+    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.renderer.setClearColor(0xbfd1e5);
+    this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.setClearColor('#808080');
+    document.body.appendChild(this.renderer.domElement);
+
+    this.renderer.gammaInput = true;
+    this.renderer.gammaOutput = true;
+
+    this.renderer.shadowMap.enabled = true;
 
     this.animate();
   }
@@ -208,20 +258,18 @@ export class GameComponent implements OnInit {
     return sphere;
   }
 
-  createPlane() {
-    const geometry = new THREE.PlaneGeometry(50, 50, 2, 2);
-    const material = new THREE.MeshPhongMaterial({
-      color: 0xffffff,
-      emissive: 0x000000,
-      specular: 0xbcbcbc
-    })
-    const plane = new THREE.Mesh(geometry, material);
-    plane.rotateX(Math.PI / 2);
-    plane.rotateY(Math.PI);
-    plane.position.set(0, -10, 0);
-    plane.castShadow = true;
-    plane.receiveShadow = true;
-    return plane;
+  createPlane(coords = { x: 0, y: 0, z: 0 }, scale = { l: 0, h: 0, b: 0 }, color = '#FF0000') {
+
+    //threeJS Section
+    let blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: color }));
+
+    blockPlane.position.set(coords.x, coords.y, coords.z);
+    blockPlane.scale.set(scale.l, scale.h, scale.b);
+
+    blockPlane.castShadow = true;
+    blockPlane.receiveShadow = true;
+
+    return blockPlane;
   }
 
   createAxesHelper() {
@@ -234,7 +282,7 @@ export class GameComponent implements OnInit {
     this.sceneElems[0].rotation.x += 0.01;
     this.sceneElems[0].rotation.y += 0.01;
     this.renderer.render(this.scene, this.camera);
-	  this.stats.end();
+    this.stats.end();
     requestAnimationFrame(this.animate.bind(this));
   }
 
