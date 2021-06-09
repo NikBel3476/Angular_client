@@ -46,8 +46,8 @@ export class ServerService {
     this.server.joinGame(roomName);
   }
 
-  leaveRoom(roomName: any) {
-    this.server.leaveRoom(roomName);
+  leaveGame() {
+    this.server.leaveGame();
   }
 
   getRooms() {

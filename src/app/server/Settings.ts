@@ -11,7 +11,7 @@ export const SETTINGS = {
         REGISTRATION: 'REGISTRATION',
         CREATE_ROOM: 'CREATE_ROOM',
         JOIN_GAME: 'JOIN_GAME',
-        LEAVE_ROOM: 'LEAVE_ROOM',
+        LEAVE_GAME: 'LEAVE_GAME',
         GET_GAMES: 'GET_GAMES',
         MOVE: 'MOVE',
         STOP_MOVE: 'STOP_MOVE',

@@ -61,16 +61,16 @@ export class GameComponent implements OnInit {
       case 'Escape':
         this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
         break;
-      case 'w':
+      case 'w' || 'ц':
         this.serverService.move(Direction.Forward);
         break;
-      case 'a':
+      case 'a' || 'ф':
         this.serverService.move(Direction.Left);
         break;
-      case 's':
+      case 's' || 'ы':
         this.serverService.move(Direction.Back);
         break;
-      case 'd':
+      case 'd' || 'в':
         this.serverService.move(Direction.Right);
         break;
     }
@@ -94,13 +94,13 @@ export class GameComponent implements OnInit {
     }
   }
 
-  @HostListener('document:mousemove', ['$event'])
+/*   @HostListener('document:mousemove', ['$event'])
   mouseMove(event: MouseEvent) {
     this.cameraDirection.x += event.movementX / 25;
     this.cameraDirection.y -= event.movementY / 25;
     this.camera.lookAt(this.cameraDirection);
     this.serverService.changeDirection(event.movementX, -event.movementY);
-  }
+  } */
 
   constructor(
     private router: Router,
@@ -112,7 +112,7 @@ export class GameComponent implements OnInit {
     document.body.appendChild(this.stats.dom);
 
     // sockets
-    serverService.on(this.EVENTS.LEAVE_ROOM, (result: any) => this.onLeaveRoom(result));
+    serverService.on(this.EVENTS.LEAVE_GAME, (result: any) => this.onLeaveGame(result));
 
     // инициализация игры
     // camera
@@ -134,12 +134,9 @@ export class GameComponent implements OnInit {
   ngOnInit(): void {
     if (!this.cookieService.get('token')) {
       this.router.navigate(['authorization']);
-     
     }
 
     // scene initialization
-    // renderer
-    this.canvas = document.getElementById('gameScene') as HTMLCanvasElement;
     
     //create the scene
     this.scene.background = new THREE.Color(0xbfd1e5);
@@ -178,7 +175,8 @@ export class GameComponent implements OnInit {
     dirLight.shadow.camera.far = 13500;
 
     //Setup the renderer
-    this.renderer = new THREE.WebGLRenderer({ antialias: true });
+    this.canvas = document.getElementById('gameScene') as HTMLCanvasElement;
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas, antialias: true });
     this.renderer.setClearColor(0xbfd1e5);
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -192,14 +190,14 @@ export class GameComponent implements OnInit {
     this.animate();
   }
 
-  leaveRoom() {
-    this.serverService.leaveRoom(localStorage.getItem('room'));
+  leaveGame() {
+    this.serverService.leaveGame();
   }
 
-  onLeaveRoom(data: any) {
+  onLeaveGame(data: any) {
     if (data.result) {
       this.router.navigate(['rooms']);
-      localStorage.removeItem('room');
+      this.cookieService.delete('room');
     }
   }
 

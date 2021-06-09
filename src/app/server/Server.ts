@@ -35,8 +35,8 @@ export class Server {
       this.fireEvent(this.EVENTS.CREATE_ROOM, data));
     this.socket.on(this.EVENTS.JOIN_GAME, (data: any) =>
       this.fireEvent(this.EVENTS.JOIN_GAME, data));
-    this.socket.on(this.EVENTS.LEAVE_ROOM, (data: any) =>
-      this.fireEvent(this.EVENTS.LEAVE_ROOM, data));
+    this.socket.on(this.EVENTS.LEAVE_GAME, (data: any) =>
+      this.fireEvent(this.EVENTS.LEAVE_GAME, data));
     this.socket.on(this.EVENTS.GET_GAMES, (data: any) =>
       this.fireEvent(this.EVENTS.GET_GAMES, data));
     this.socket.on(this.EVENTS.USER_ENTER_CHAT, (data: any) =>
@@ -56,7 +56,7 @@ export class Server {
     USER_OFFLINE: "USER_OFFLINE",
     CREATE_ROOM: "CREATE_ROOM",
     JOIN_GAME: "JOIN_GAME",
-    LEAVE_ROOM: "LEAVE_ROOM",
+    LEAVE_GAME: "LEAVE_GAME",
     GET_GAMES: "GET_GAMES",
     USER_ENTER_CHAT: 'USER_ENTER_CHAT',
     USER_LEAVE_CHAT: 'USER_LEAVE_CHAT',
@@ -116,8 +116,8 @@ export class Server {
   // --------------------------
   sendMessage(message: String) {
     if (message) {
-      const token = localStorage.getItem('token');
-      const room = String(localStorage.getItem('room'));
+      const token: string = this.cookieService.get('token');
+      const room: string = this.cookieService.get('room');
       this.socket.emit(this.MESSAGES.SEND_MESSAGE, { message, token, room});
     }
   }
@@ -132,20 +132,20 @@ export class Server {
     this.socket.emit(this.MESSAGES.CREATE_ROOM, data);
   }
 
-  leaveRoom(roomName: string) {
-    const data = {
-      roomName,
-      token: this.cookieService.get('token')
-    }
-    this.socket.emit(this.MESSAGES.LEAVE_ROOM, data);
-  }
-
   joinGame(gameName: string) {
     const data = {
       gameName,
       token: this.cookieService.get('token')
     };
     this.socket.emit(this.MESSAGES.JOIN_GAME, data);
+  }
+
+  leaveGame() {
+    const data = {
+      gameName: this.cookieService.get('game'),
+      token: this.cookieService.get('token')
+    }
+    this.socket.emit(this.MESSAGES.LEAVE_GAME, data);
   }
 
   getGames() {
