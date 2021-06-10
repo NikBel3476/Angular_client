@@ -1,4 +1,4 @@
-import { Component, Injectable, OnInit } from '@angular/core';
+import { Component, Host, HostListener, Injectable, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ServerService } from '../server.service';
@@ -28,6 +28,7 @@ export class AuthorizationComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // this.cookieService.get('token') ? this.serverService.login(this.user) : null;
   }
 
   authorization() {

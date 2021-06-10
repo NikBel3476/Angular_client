@@ -5,7 +5,6 @@ import * as THREE from 'three';
 import * as Stats from 'stats.js';
 import { ServerService } from '../server.service';
 import { Direction } from '../Enum';
-import { BrowserStack } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-game',
@@ -52,6 +51,12 @@ export class GameComponent implements OnInit {
 
   room: string = "";
 
+  // выйти из игры при обновлении страницы
+  /* @HostListener('window:beforeunload', ['$event'])
+  onWindowOnload(event: any) {
+    this.cookieService.get('game') ? this.cookieService.delete('game') : null;
+  } */
+
   // обработка нажатия клавиши
   @HostListener('document:keydown', ['$event'])
   keyDown(event: KeyboardEvent) {
@@ -82,28 +87,11 @@ export class GameComponent implements OnInit {
   }
 
   move(direction: Direction) {
-    const dirVector = {
-      x: this.cameraDirection.x - this.camera.position.x,
-      z: this.cameraDirection.z - this.camera.position.z
-    };
-    const vectX = { x: 1, z: 0};
-    const vectZ = { x: 0, z: 1};
-    const cos = this.calcCos(vectX, dirVector);
-    const sin = 1 - cos**2;
     switch (direction) {
       case Direction.Forward: {
-        console.log(cos); 
-        /* this.camera.position.x += 1 * cos;
-        this.camera.position.z += 1 * sin; */
-        let vector = this.camera.getWorldDirection(new THREE.Vector3());
-        console.log(Math.acos(vector.x), )
-        // this.camera.rotateX(0.1);
         break;
       }
       case Direction.Back: {
-        console.log(cos);
-        /* this.camera.position.x -= 1 * cos;
-        this.camera.position.z -= 1 * sin; */
         break;
       }
     }
@@ -172,8 +160,6 @@ export class GameComponent implements OnInit {
     serverService.on(this.EVENTS.LEAVE_GAME, (result: any) => this.onLeaveGame(result));
 
     // инициализация игры
-    // camera
-    // this.camera.lookAt(this.cameraDirection);
 
     // renderer
     this.renderer = new THREE.WebGLRenderer();
@@ -186,9 +172,9 @@ export class GameComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    if (!this.cookieService.get('token')) {
-      this.router.navigate(['authorization']);
-    }
+    !this.cookieService.get('token') ? this.router.navigate(['authorization']) : null;
+    !this.cookieService.get('game') ? this.router.navigate(['rooms']) : null;
+
 
     // scene initialization
     
@@ -250,8 +236,8 @@ export class GameComponent implements OnInit {
 
   onLeaveGame(data: any) {
     if (data.result) {
+      this.cookieService.get('game') ? this.cookieService.delete('game') : null;
       this.router.navigate(['rooms']);
-      this.cookieService.delete('room');
     }
   }
 
