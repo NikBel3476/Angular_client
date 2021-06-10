@@ -67,4 +67,8 @@ export class ServerService {
   changeDirection(x: number, y: number) {
     this.server.changeDireciton(x, y);
   }
+
+  getNames() {
+    this.server.getNames();
+  }
 }

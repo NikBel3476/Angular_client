@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import * as Stats from 'stats.js';
 import { ServerService } from '../server.service';
 import { Direction } from '../Enum';
+import { BrowserStack } from 'protractor/built/driverProviders';
 
 @Component({
   selector: 'app-game',
@@ -62,18 +63,62 @@ export class GameComponent implements OnInit {
         this.chatIsVisible ? this.chatIsVisible = false : console.log('You open Menu!');
         break;
       case 'w' || 'ц':
+        this.move(Direction.Forward);
         this.serverService.move(Direction.Forward);
         break;
       case 'a' || 'ф':
+        this.move(Direction.Left);
         this.serverService.move(Direction.Left);
         break;
       case 's' || 'ы':
+        this.move(Direction.Back);
         this.serverService.move(Direction.Back);
         break;
       case 'd' || 'в':
+        this.move(Direction.Right);
         this.serverService.move(Direction.Right);
         break;
     }
+  }
+
+  move(direction: Direction) {
+    const dirVector = {
+      x: this.cameraDirection.x - this.camera.position.x,
+      z: this.cameraDirection.z - this.camera.position.z
+    };
+    const vectX = { x: 1, z: 0};
+    const vectZ = { x: 0, z: 1};
+    const cos = this.calcCos(vectX, dirVector);
+    const sin = 1 - cos**2;
+    switch (direction) {
+      case Direction.Forward: {
+        console.log(cos); 
+        /* this.camera.position.x += 1 * cos;
+        this.camera.position.z += 1 * sin; */
+        let vector = this.camera.getWorldDirection(new THREE.Vector3());
+        console.log(Math.acos(vector.x), )
+        // this.camera.rotateX(0.1);
+        break;
+      }
+      case Direction.Back: {
+        console.log(cos);
+        /* this.camera.position.x -= 1 * cos;
+        this.camera.position.z -= 1 * sin; */
+        break;
+      }
+    }
+  }
+
+  calcCos(vect1: any, vect2: any): any {
+    return this.scalMult(vect1, vect2) / (this.vectModule(vect1) * this.vectModule(vect2));
+  }
+
+  scalMult(vect1: any, vect2: any) {
+    return vect1.x * vect2.x + vect1.z * vect2.z;
+  }
+
+  vectModule(vect: any) {
+    return Math.sqrt(vect.x**2 + vect.z**2);
   }
 
   @HostListener('document:keyup', ['$event'])
@@ -94,13 +139,25 @@ export class GameComponent implements OnInit {
     }
   }
 
-/*   @HostListener('document:mousemove', ['$event'])
+  /* @HostListener('document:mousemove', ['$event'])
   mouseMove(event: MouseEvent) {
-    this.cameraDirection.x += event.movementX / 25;
+    console.log(this.cameraDirection.x, this.cameraDirection.y, this.cameraDirection.z);
+    this.cameraDirection.z += event.movementX / 25;
     this.cameraDirection.y -= event.movementY / 25;
     this.camera.lookAt(this.cameraDirection);
     this.serverService.changeDirection(event.movementX, -event.movementY);
   } */
+
+  @HostListener('window:resize', ['$event'])
+  resize(event: any) {
+    this.onWindowResize();
+  }
+
+  onWindowResize(): void {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
 
   constructor(
     private router: Router,
@@ -116,7 +173,7 @@ export class GameComponent implements OnInit {
 
     // инициализация игры
     // camera
-    this.camera.lookAt(this.cameraDirection);
+    // this.camera.lookAt(this.cameraDirection);
 
     // renderer
     this.renderer = new THREE.WebGLRenderer();
@@ -127,9 +184,6 @@ export class GameComponent implements OnInit {
     this.addAmbientLight();
     this.createAxesHelper();
   }
-
-  
-
 
   ngOnInit(): void {
     if (!this.cookieService.get('token')) {
@@ -143,7 +197,7 @@ export class GameComponent implements OnInit {
 
     //create camera
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 5000);
-    this.camera.position.set(0, 10, 30);
+    this.camera.position.set(5, 10, 30);
     this.camera.lookAt(new THREE.Vector3(0, 5, 0));
 
     //Add hemisphere light
@@ -285,6 +339,6 @@ export class GameComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    document.querySelector('canvas')?.remove();
+    document.getElementById('gameScene')?.remove();
   }
 }

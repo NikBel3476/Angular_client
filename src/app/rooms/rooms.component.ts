@@ -1,3 +1,4 @@
+import { getLocaleDayNames } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
@@ -22,6 +23,7 @@ export class RoomsComponent implements OnInit {
     serverService.on(this.EVENTS.CREATE_ROOM, (result: boolean) => this.onCreateRoom(result));
     serverService.on(this.EVENTS.JOIN_GAME, (result: any) => this.onJoinGame(result));
     serverService.on(this.EVENTS.GET_GAMES, (result: any) => this.onGetGames(result));
+    serverService.on(this.EVENTS.GET_NAMES, (result: any) => this.onGetNames(result));
   }
 
   ngOnInit(): void {
@@ -30,6 +32,14 @@ export class RoomsComponent implements OnInit {
     } else {
       this.serverService.getRooms();
     }
+  }
+
+  getNames() {
+    this.serverService.getNames();
+  }
+
+  onGetNames(data: any) {
+    console.log(data);
   }
 
   onCreateRoom(data: any): void {
