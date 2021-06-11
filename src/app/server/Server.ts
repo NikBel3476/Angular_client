@@ -45,6 +45,8 @@ export class Server {
       this.fireEvent(this.EVENTS.USER_LEAVE_CHAT, data));
     this.socket.on(this.EVENTS.GET_NAMES, (data: any) =>
       this.fireEvent(this.EVENTS.GET_NAMES, data));
+    this.socket.on(this.EVENTS.SPEED_SHANGE, (data:any) =>
+      this.fireEvent(this.EVENTS.SPEED_SHANGE, data));
   
     this.socket.on('connect', () => console.log('sockets connected'));
   }
@@ -62,7 +64,8 @@ export class Server {
     GET_GAMES: "GET_GAMES",
     USER_ENTER_CHAT: 'USER_ENTER_CHAT',
     USER_LEAVE_CHAT: 'USER_LEAVE_CHAT',
-    GET_NAMES: "GET_NAMES"
+    GET_NAMES: "GET_NAMES",
+    SPEED_SHANGE: "SPEED_CHANGE"
   };
   
   events: { [key: string]: any[] } = {};
@@ -173,4 +176,15 @@ export class Server {
   getNames() {
     this.socket.emit(this.EVENTS.GET_NAMES);
   }
+
+
+  speedUp() {
+    this.socket.emit(this.MESSAGES.SPEED_UP);
+  }
+
+  speedDown() {
+    this.socket.emit(this.MESSAGES.SPEED_DOWN);
+  }
+
+
 }

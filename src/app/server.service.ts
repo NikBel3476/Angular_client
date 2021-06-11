@@ -71,4 +71,15 @@ export class ServerService {
   getNames() {
     this.server.getNames();
   }
+
+
+  speedUp() {
+    this.server.speedUp();
+  }
+
+  speedDown() {
+    this.server.speedDown();
+  }
+
+
 }

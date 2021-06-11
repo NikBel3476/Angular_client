@@ -24,7 +24,13 @@ export class GameComponent implements OnInit {
   camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
   cameraDirection = new THREE.Vector3(0, 0, 0);
   stats = new Stats();
-
+  //Начальные данные для камеры
+  scale = 0.3;
+  mousex = 0;
+  mousey = 0;
+  //Константа для движения
+  constMove = 0.4;
+  
 
   plane1 = this.createPlane({ x: 0, y: 15, z: -30 }, { l: 50, h: 50, b: 10 }, "#FFFFFF");
   plane2 = this.createPlane({ x: -30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 });
@@ -89,9 +95,23 @@ export class GameComponent implements OnInit {
   move(direction: Direction) {
     switch (direction) {
       case Direction.Forward: {
+        this.camera.position.x-=this.constMove * Math.sin(Math.PI * this.mousex);
+        this.camera.position.z-=this.constMove * Math.cos(Math.PI * this.mousex);
         break;
       }
       case Direction.Back: {
+        this.camera.position.x+=this.constMove * Math.sin(Math.PI * this.mousex);
+        this.camera.position.z+=this.constMove * Math.cos(Math.PI * this.mousex);
+        break;
+      }
+      case Direction.Right: {
+        this.camera.position.x+=this.constMove * Math.sin(Math.PI * this.mousex + Math.PI/2);
+        this.camera.position.z+=this.constMove * Math.cos(Math.PI * this.mousex + Math.PI/2);
+        break;
+      }
+      case Direction.Left: {
+        this.camera.position.x+=this.constMove * Math.sin(Math.PI * this.mousex - Math.PI/2);
+        this.camera.position.z+=this.constMove * Math.cos(Math.PI * this.mousex - Math.PI/2);
         break;
       }
     }
@@ -127,14 +147,15 @@ export class GameComponent implements OnInit {
     }
   }
 
-  /* @HostListener('document:mousemove', ['$event'])
+   @HostListener('document:mousemove', ['$event'])
   mouseMove(event: MouseEvent) {
-    console.log(this.cameraDirection.x, this.cameraDirection.y, this.cameraDirection.z);
-    this.cameraDirection.z += event.movementX / 25;
-    this.cameraDirection.y -= event.movementY / 25;
-    this.camera.lookAt(this.cameraDirection);
-    this.serverService.changeDirection(event.movementX, -event.movementY);
-  } */
+    this.camera.rotation.order = "YXZ"; // this is not the default
+    this.mousex = - ( event.clientX / this.renderer.domElement.clientWidth ) * 2 + 1;
+    this.mousey = - ( event.clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
+    this.camera.rotation.x = this.mousey / this.scale;
+    this.camera.rotation.y = this.mousex / this.scale;
+    console.log(this.mousex);
+    }
 
   @HostListener('window:resize', ['$event'])
   resize(event: any) {
@@ -158,6 +179,7 @@ export class GameComponent implements OnInit {
 
     // sockets
     serverService.on(this.EVENTS.LEAVE_GAME, (result: any) => this.onLeaveGame(result));
+    serverService.on(this.EVENTS.SPEED_SHANGE, (result: any) => this.onSpeedChange(result));
 
     // инициализация игры
 
@@ -241,6 +263,26 @@ export class GameComponent implements OnInit {
     }
   }
 
+
+  speedUp() {
+    this.serverService.speedUp();
+  }
+
+  speedDown() {
+    this.serverService.speedDown();
+  }
+
+  onSpeedChange(data: any) {
+    if(data.result == 'up') {
+      this.constMove += 0.5;
+    };
+    if(data.result == 'down' && this.constMove > 0.5) {
+      this.constMove -= 0.5;
+    }
+  }
+
+
+
   addLight() {
     this.renderer.shadowMap.enabled = true;
     const light = new THREE.DirectionalLight(0xffffff, 0.75);
@@ -314,6 +356,7 @@ export class GameComponent implements OnInit {
     const axesHelper = new THREE.AxesHelper(15);
     this.scene.add(axesHelper);
   }
+
 
   animate() {
     this.stats.begin();
