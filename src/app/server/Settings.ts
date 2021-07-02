@@ -18,5 +18,6 @@ export const SETTINGS = {
         CHANGE_DIRECTION: 'CHANGE_DIRECTION',
         SPEED_UP: 'SPEED_UP',
         SPEED_DOWN: 'SPEED_DOWN',
+        CHANGE_PASSWORD: 'CHANGE_PASSWORD'
     }
 };

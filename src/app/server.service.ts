@@ -81,5 +81,8 @@ export class ServerService {
     this.server.speedDown();
   }
 
+  changePassword(login: string, oldPassword: string, newPassword: string) {
+    this.server.changePassword(login, oldPassword, newPassword);
+  }
 
 }

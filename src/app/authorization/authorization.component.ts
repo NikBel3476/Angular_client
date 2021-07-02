@@ -36,9 +36,9 @@ export class AuthorizationComponent implements OnInit {
     delete this.user.password;
   }
 
-  onGetToken(token: String) {
-    if (typeof token === 'string') {
-      this.cookieService.set('token', token);
+  onGetToken(data: any) {
+    if (data.result && typeof data.token === 'string') {
+      this.cookieService.set('token', data.token);
       this.router.navigate(['rooms']);
     }
   }

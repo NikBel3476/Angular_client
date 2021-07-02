@@ -15,6 +15,7 @@ import { HeaderComponent } from './header/header.component';
 import { LogoutComponent } from './logout/logout.component';
 import { RoomsComponent } from './rooms/rooms.component';
 import { SETTINGS } from './server/Settings';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 const config: SocketIoConfig = { url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`, options: {} };
 
@@ -27,7 +28,8 @@ const config: SocketIoConfig = { url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`, opti
     RegistrationComponent,
     HeaderComponent,
     LogoutComponent,
-    RoomsComponent
+    RoomsComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -39,6 +41,7 @@ const config: SocketIoConfig = { url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`, opti
       {path: 'authorization', component: AuthorizationComponent},
       {path: 'registration', component: RegistrationComponent},
       {path: 'rooms', component: RoomsComponent},
+      {path: 'change-password', component: ChangePasswordComponent},
       {path: '', redirectTo: '/authorization', pathMatch: 'full'},
       {path: '**', redirectTo: '/authorization', pathMatch: 'full'}
     ])
