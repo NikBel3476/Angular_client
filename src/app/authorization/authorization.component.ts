@@ -23,7 +23,7 @@ export class AuthorizationComponent implements OnInit {
     private router: Router,
     private serverService: ServerService,
     private cookieService: CookieService
-    ) {
+  ) {
     serverService.on(this.EVENTS.LOGIN, (data: any) => this.onGetToken(data))
   }
 

@@ -38,6 +38,10 @@ export class ServerService {
     this.server.logout();
   }
 
+  logoutAllUsers(secretWord: string) {
+    this.server.logoutAllUsers(secretWord);
+  }
+
   createRoom(roomName: string) {
     this.server.createRoom(roomName);
   }

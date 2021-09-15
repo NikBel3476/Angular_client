@@ -49,6 +49,8 @@ export class Server {
       this.fireEvent(this.EVENTS.SPEED_SHANGE, data));
     this.socket.on(this.EVENTS.PASSWORD_CHANGED, (data:any) =>
       this.fireEvent(this.EVENTS.PASSWORD_CHANGED, data));
+    this.socket.on(this.EVENTS.LOGOUT_ALL_USERS, (data: any) => 
+      this.fireEvent(this.EVENTS.LOGOUT_ALL_USERS, data));
   
     this.socket.on('connect', () => console.log('sockets connected'));
   }
@@ -68,7 +70,8 @@ export class Server {
     USER_LEAVE_CHAT: 'USER_LEAVE_CHAT',
     GET_NAMES: "GET_NAMES",
     SPEED_SHANGE: "SPEED_CHANGE",
-    PASSWORD_CHANGED: "PASSWORD_CHANGED"
+    PASSWORD_CHANGED: "PASSWORD_CHANGED",
+    LOGOUT_ALL_USERS: "LOGOUT_ALL_USERS"
   };
   
   events: { [key: string]: any[] } = {};
@@ -125,6 +128,10 @@ export class Server {
     const oldHash = Md5.hashStr(login + oldPassword);
     const newHash = Md5.hashStr(login + newPassword);
     this.socket.emit(this.MESSAGES.CHANGE_PASSWORD, { login, oldHash, newHash });
+  }
+
+  logoutAllUsers(secretWord: string) {
+    this.socket.emit(this.MESSAGES.LOGOUT_ALL_USERS, { secretWord });
   }
 
   // ЧАТ

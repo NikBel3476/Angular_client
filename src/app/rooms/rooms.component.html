@@ -19,4 +19,8 @@
     <div>
         <button (click)="getNames()">button</button>
     </div>
+    <div style="margin-top: 10px;">
+        <input [(ngModel)]="secretWord" type="text" placeholder="Кодовое слово - logout">
+        <button (click)="logoutAllUsers()">Разлогинить всех игроков</button>
+    </div>
 </div>

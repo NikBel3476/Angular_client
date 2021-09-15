@@ -154,7 +154,7 @@ export class GameComponent implements OnInit {
     this.mousey = - ( event.clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
     this.camera.rotation.x = this.mousey / this.scale;
     this.camera.rotation.y = this.mousex / this.scale;
-    console.log(this.mousex);
+    // console.log(this.mousex);
     }
 
   @HostListener('window:resize', ['$event'])
