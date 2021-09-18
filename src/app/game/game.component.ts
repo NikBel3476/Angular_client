@@ -30,13 +30,28 @@ export class GameComponent implements OnInit {
   mousey = 0;
   //Константа для движения
   constMove = 0.4;
-  
+  //Для хождения (или нет) сквозь стены
+  nextCameraPosition = {
+    x: this.camera.position.x,
+    y: this.camera.position.y,
+    z: this.camera.position.z
+  };
+  arrayAnalyze = [
+    { A: { x: -25, y: -15, z: 50 }, B: { x: -25, y: -15, z: -50 }, C: { x: -25, y: 45, z: -50 } } //plane2
+
+  ];
+
 
   plane1 = this.createPlane({ x: 0, y: 15, z: -30 }, { l: 50, h: 50, b: 10 }, "#FFFFFF");
+
   plane2 = this.createPlane({ x: -30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 });
+
   plane3 = this.createPlane({ x: 30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }, '#FF00FF');
+
   plane4 = this.createPlane({ x: 0, y: 45, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB');
+
   plane5 = this.createPlane({ x: 0, y: -15, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB');
+
 
   cube = this.createCube();
   sphere = this.createSphere();
@@ -95,39 +110,108 @@ export class GameComponent implements OnInit {
   move(direction: Direction) {
     switch (direction) {
       case Direction.Forward: {
-        this.camera.position.x-=this.constMove * Math.sin(Math.PI * this.mousex);
-        this.camera.position.z-=this.constMove * Math.cos(Math.PI * this.mousex);
+        /* this.camera.position.x -= this.constMove * Math.sin(Math.PI * this.mousex);
+        this.camera.position.z -= this.constMove * Math.cos(Math.PI * this.mousex); */
+        this.nextCameraPosition.x -= this.constMove * Math.sin(Math.PI * this.mousex);
+        this.nextCameraPosition.z -= this.constMove * Math.cos(Math.PI * this.mousex);
         break;
       }
       case Direction.Back: {
-        this.camera.position.x+=this.constMove * Math.sin(Math.PI * this.mousex);
-        this.camera.position.z+=this.constMove * Math.cos(Math.PI * this.mousex);
+        this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex);
+        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex);
         break;
       }
       case Direction.Right: {
-        this.camera.position.x+=this.constMove * Math.sin(Math.PI * this.mousex + Math.PI/2);
-        this.camera.position.z+=this.constMove * Math.cos(Math.PI * this.mousex + Math.PI/2);
+        this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex + Math.PI / 2);
+        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex + Math.PI / 2);
         break;
       }
       case Direction.Left: {
-        this.camera.position.x+=this.constMove * Math.sin(Math.PI * this.mousex - Math.PI/2);
-        this.camera.position.z+=this.constMove * Math.cos(Math.PI * this.mousex - Math.PI/2);
+        this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex - Math.PI / 2);
+        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex - Math.PI / 2);
         break;
       }
     }
+
+    let result = this.analyze(this.camera.position, this.nextCameraPosition);
+    console.log(result);
+    if (!result) {
+      console.log("<<< ПРОШЁЛЛЛ >>>");
+      this.camera.position.x = this.nextCameraPosition.x;
+      this.camera.position.z = this.nextCameraPosition.z;
+    } else {
+      console.log("<<< АТАТАТАТА >>>");
+      this.nextCameraPosition.x = this.camera.position.x;
+      this.nextCameraPosition.x = this.camera.position.x;
+    }
+
   }
+
+
+
+  analyze(nowPosition: any, nextPosition: any) {
+    let polygon = this.arrayAnalyze[0];
+    let N1 = this.vectMult(this.subVect(polygon.B, polygon.A), this.subVect(polygon.C, polygon.A));
+    let N = this.divVectNum(N1, this.vectModule(N1));
+    let V = this.subVect(polygon.A, nowPosition);
+    let D = this.scalMult(N, V);
+    let W = this.subVect(nextPosition, nowPosition);
+    let E = this.scalMult(N, W);
+    if (E != 0) {
+      let O = this.sumVect(nowPosition, this.multVectNum(W, D/E));
+      let answer = this.scalMult(this.subVect(nowPosition, O), this.subVect(nextPosition, O))
+      if(answer >= 0) {
+        return true;
+      }
+    };
+    return false;
+  }
+
+
 
   calcCos(vect1: any, vect2: any): any {
-    return this.scalMult(vect1, vect2) / (this.vectModule(vect1) * this.vectModule(vect2));
+    return this.scalMultForCos(vect1, vect2) / (this.vectModuleForCos(vect1) * this.vectModuleForCos(vect2));
   }
 
-  scalMult(vect1: any, vect2: any) {
+  scalMultForCos(vect1: any, vect2: any) {
     return vect1.x * vect2.x + vect1.z * vect2.z;
   }
 
-  vectModule(vect: any) {
-    return Math.sqrt(vect.x**2 + vect.z**2);
+  scalMult(vect1: any, vect2: any) {
+    return vect1.x * vect2.x + vect1.y * vect2.y + vect1.z * vect2.z;
   }
+
+  vectMult(vect1: any, vect2: any) {
+    let x = vect1.y * vect2.z - vect1.z * vect2.y;
+    let y = vect1.x * vect2.z - vect1.z * vect2.x;
+    let z = vect1.x * vect2.y - vect1.y * vect2.x;
+    return { x, y, z };
+  }
+
+  multVectNum(vect: any, num: any) {
+    return { x: vect.x * num, y: vect.y * num, z: vect.z * num};
+  }
+
+  divVectNum(vect: any, num: any) {
+    return { x: vect.x / num, y: vect.y / num, z: vect.z / num };
+  }
+
+  sumVect(vect1: any, vect2: any) {
+    return { x: vect1.x + vect2.x, y: vect1.y + vect2.y, z: vect1.z + vect2.z };
+  }
+
+  subVect(vect1: any, vect2: any) {
+    return { x: vect1.x - vect2.x, y: vect1.y - vect2.y, z: vect1.z - vect2.z };
+  }
+
+  vectModuleForCos(vect: any) {
+    return Math.sqrt(vect.x ** 2 + vect.z ** 2);
+  }
+
+  vectModule(vect: any) {
+    return Math.sqrt(vect.x ** 2 + vect.y ** 2 + vect.z ** 2);
+  }
+
 
   @HostListener('document:keyup', ['$event'])
   keyUp(event: KeyboardEvent) {
@@ -147,15 +231,15 @@ export class GameComponent implements OnInit {
     }
   }
 
-   @HostListener('document:mousemove', ['$event'])
+  @HostListener('document:mousemove', ['$event'])
   mouseMove(event: MouseEvent) {
     this.camera.rotation.order = "YXZ"; // this is not the default
-    this.mousex = - ( event.clientX / this.renderer.domElement.clientWidth ) * 2 + 1;
-    this.mousey = - ( event.clientY / this.renderer.domElement.clientHeight ) * 2 + 1;
+    this.mousex = - (event.clientX / this.renderer.domElement.clientWidth) * 2 + 1;
+    this.mousey = - (event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
     this.camera.rotation.x = this.mousey / this.scale;
     this.camera.rotation.y = this.mousex / this.scale;
     // console.log(this.mousex);
-    }
+  }
 
   @HostListener('window:resize', ['$event'])
   resize(event: any) {
@@ -199,7 +283,7 @@ export class GameComponent implements OnInit {
 
 
     // scene initialization
-    
+
     //create the scene
     this.scene.background = new THREE.Color(0xbfd1e5);
 
@@ -273,10 +357,10 @@ export class GameComponent implements OnInit {
   }
 
   onSpeedChange(data: any) {
-    if(data.result == 'up') {
+    if (data.result == 'up') {
       this.constMove += 0.5;
     };
-    if(data.result == 'down' && this.constMove > 0.5) {
+    if (data.result == 'down' && this.constMove > 0.5) {
       this.constMove -= 0.5;
     }
   }
