@@ -31,26 +31,55 @@ export class GameComponent implements OnInit {
   //Константа для движения
   constMove = 0.4;
   //Для хождения (или нет) сквозь стены
+  switchWalkingThroughWalls = false;
   nextCameraPosition = {
     x: this.camera.position.x,
     y: this.camera.position.y,
     z: this.camera.position.z
   };
   arrayAnalyze = [
-    { A: { x: -25, y: -15, z: 50 }, B: { x: -25, y: -15, z: -50 }, C: { x: -25, y: 45, z: -50 } } //plane2
-
+    {
+      A: { x: -25, y: -10, z: -25 },
+      B: { x: 25, y: -10, z: -25 },
+      C: { x: 25, y: 40, z: -25 },
+      D: { x: -25, y: 40, z: -25 }
+    }, //plane1
+    {
+      A: { x: -25, y: -15, z: 50 },
+      B: { x: -25, y: -15, z: -50 },
+      C: { x: -25, y: 45, z: -50 },
+      D: { x: -25, y: 45, z: 50 }
+    }, //plane2
+    {
+      A: { x: 25, y: -15, z: -50 },
+      B: { x: 25, y: -15, z: 50 },
+      C: { x: 25, y: 45, z: 50 },
+      D: { x: 25, y: 45, z: -50 }
+    }, //plane3
+    {
+      A: { x: 25, y: -10, z: 40 },
+      B: { x: -25, y: -10, z: 40 },
+      C: { x: -25, y: 45, z: 40 },
+      D: { x: 25, y: 45, z: 40 }
+    } //plane6 */
   ];
 
 
-  plane1 = this.createPlane({ x: 0, y: 15, z: -30 }, { l: 50, h: 50, b: 10 }, "#FFFFFF");
+  plane1 = this.createPlane({ x: 0, y: 15, z: -30 }, { l: 50, h: 50, b: 10 }, "#FFFFFF"); //Передняя
 
-  plane2 = this.createPlane({ x: -30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 });
+  plane2 = this.createPlane({ x: -30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }); //Левая
 
-  plane3 = this.createPlane({ x: 30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }, '#FF00FF');
+  plane3 = this.createPlane({ x: 30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }, '#FF00FF'); //Правая
 
-  plane4 = this.createPlane({ x: 0, y: 45, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB');
+  plane4 = this.createPlane({ x: 0, y: 45, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB'); //Верхняя
 
-  plane5 = this.createPlane({ x: 0, y: -15, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB');
+  plane5 = this.createPlane({ x: 0, y: -15, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB'); //Нижняя
+
+  plane6 = this.createPlane({ x: 0, y: 15, z: 45 }, { l: 50, h: 50, b: 10 }, "#FFFF00"); //Задняя
+
+
+  plane7 = this.createPlane({ x: 25, y: 45, z: 50 }, { l: 2, h: 2, b: 2 }, "#FF0000");
+  plane8 = this.createPlane({ x: 25, y: 45, z: -50 }, { l: 2, h: 2, b: 2 }, "#000000");
 
 
   cube = this.createCube();
@@ -65,7 +94,10 @@ export class GameComponent implements OnInit {
     this.plane2,
     this.plane4,
     this.plane5,
-    this.plane3
+    this.plane3,
+    this.plane6,
+    this.plane7,
+    this.plane8
   ];
 
   EVENTS = this.serverService.getEvents();
@@ -117,24 +149,33 @@ export class GameComponent implements OnInit {
         break;
       }
       case Direction.Back: {
-        this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex);
-        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex);
+        /* this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex);
+        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex); */
+        this.nextCameraPosition.x += this.constMove * Math.sin(Math.PI * this.mousex);
+        this.nextCameraPosition.z += this.constMove * Math.cos(Math.PI * this.mousex);
         break;
       }
       case Direction.Right: {
-        this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex + Math.PI / 2);
-        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex + Math.PI / 2);
+        /* this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex + Math.PI / 2);
+        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex + Math.PI / 2); */
+        this.nextCameraPosition.x += this.constMove * Math.sin(Math.PI * this.mousex + Math.PI / 2);
+        this.nextCameraPosition.z += this.constMove * Math.cos(Math.PI * this.mousex + Math.PI / 2);
         break;
       }
       case Direction.Left: {
-        this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex - Math.PI / 2);
-        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex - Math.PI / 2);
+        /* this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex - Math.PI / 2);
+        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex - Math.PI / 2); */
+        this.nextCameraPosition.x += this.constMove * Math.sin(Math.PI * this.mousex - Math.PI / 2);
+        this.nextCameraPosition.z += this.constMove * Math.cos(Math.PI * this.mousex - Math.PI / 2);
         break;
       }
     }
 
-    let result = this.analyze(this.camera.position, this.nextCameraPosition);
-    console.log(result);
+    let result = false;
+    if (!this.switchWalkingThroughWalls) {
+      result = this.analyze(this.camera.position, this.nextCameraPosition);
+    }
+
     if (!result) {
       console.log("<<< ПРОШЁЛЛЛ >>>");
       this.camera.position.x = this.nextCameraPosition.x;
@@ -150,21 +191,25 @@ export class GameComponent implements OnInit {
 
 
   analyze(nowPosition: any, nextPosition: any) {
-    let polygon = this.arrayAnalyze[0];
-    let N1 = this.vectMult(this.subVect(polygon.B, polygon.A), this.subVect(polygon.C, polygon.A));
-    let N = this.divVectNum(N1, this.vectModule(N1));
-    let V = this.subVect(polygon.A, nowPosition);
-    let D = this.scalMult(N, V);
-    let W = this.subVect(nextPosition, nowPosition);
-    let E = this.scalMult(N, W);
-    if (E != 0) {
-      let O = this.sumVect(nowPosition, this.multVectNum(W, D/E));
-      let answer = this.scalMult(this.subVect(nowPosition, O), this.subVect(nextPosition, O))
-      if(answer >= 0) {
-        return true;
-      }
+    let result = false;
+    for (let i = 0; i < this.arrayAnalyze.length; i++) {
+      let polygon = this.arrayAnalyze[i];
+      let N1 = this.vectMult(this.subVect(polygon.B, polygon.A), this.subVect(polygon.D, polygon.A));
+      let N = this.divVectNum(N1, this.vectModule(N1));
+      let V = this.subVect(polygon.A, nowPosition);
+      let D = this.scalMult(N, V);
+      let W = this.subVect(nextPosition, nowPosition);
+      let E = this.scalMult(N, W);
+      if (E != 0) {
+        let O = this.sumVect(nowPosition, this.multVectNum(W, D / E));
+        let answer = this.scalMult(this.subVect(nowPosition, O), this.subVect(nextPosition, O))
+        if (answer <= 0) {
+          result = true;
+          break;
+        }
+      };
     };
-    return false;
+    return result;
   }
 
 
@@ -183,13 +228,13 @@ export class GameComponent implements OnInit {
 
   vectMult(vect1: any, vect2: any) {
     let x = vect1.y * vect2.z - vect1.z * vect2.y;
-    let y = vect1.x * vect2.z - vect1.z * vect2.x;
+    let y = vect1.z * vect2.x - vect1.x * vect2.z;
     let z = vect1.x * vect2.y - vect1.y * vect2.x;
     return { x, y, z };
   }
 
   multVectNum(vect: any, num: any) {
-    return { x: vect.x * num, y: vect.y * num, z: vect.z * num};
+    return { x: vect.x * num, y: vect.y * num, z: vect.z * num };
   }
 
   divVectNum(vect: any, num: any) {
@@ -363,6 +408,19 @@ export class GameComponent implements OnInit {
     if (data.result == 'down' && this.constMove > 0.5) {
       this.constMove -= 0.5;
     }
+  }
+
+  controlAnalyze() {
+    if (this.switchWalkingThroughWalls) {
+      this.switchWalkingThroughWalls = false;
+    } else {
+      this.switchWalkingThroughWalls = true;
+    }
+    console.log(this.switchWalkingThroughWalls);
+    this.camera.position.x = 0;
+    this.camera.position.z = 0;
+    this.nextCameraPosition.x = 0;
+    this.nextCameraPosition.z = 0;
   }
 
 
