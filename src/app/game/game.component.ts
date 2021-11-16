@@ -78,8 +78,8 @@ export class GameComponent implements OnInit {
   plane6 = this.createPlane({ x: 0, y: 15, z: 45 }, { l: 50, h: 50, b: 10 }, "#FFFF00"); //Задняя
 
 
-  plane7 = this.createPlane({ x: 25, y: 45, z: 50 }, { l: 2, h: 2, b: 2 }, "#FF0000");
-  plane8 = this.createPlane({ x: 25, y: 45, z: -50 }, { l: 2, h: 2, b: 2 }, "#000000");
+ /*  plane7 = this.createPlane({ x: 25, y: 45, z: 50 }, { l: 2, h: 2, b: 2 }, "#FF0000");
+  plane8 = this.createPlane({ x: 25, y: 45, z: -50 }, { l: 2, h: 2, b: 2 }, "#000000"); */
 
 
   cube = this.createCube();
@@ -95,9 +95,7 @@ export class GameComponent implements OnInit {
     this.plane4,
     this.plane5,
     this.plane3,
-    this.plane6,
-    this.plane7,
-    this.plane8
+    this.plane6
   ];
 
   EVENTS = this.serverService.getEvents();
@@ -177,6 +175,7 @@ export class GameComponent implements OnInit {
     }
 
     if (!result) {
+      this.serverService.changePosition( { x: this.nextCameraPosition.x, z : this.nextCameraPosition.z } );
       console.log("<<< ПРОШЁЛЛЛ >>>");
       this.camera.position.x = this.nextCameraPosition.x;
       this.camera.position.z = this.nextCameraPosition.z;
@@ -283,7 +282,7 @@ export class GameComponent implements OnInit {
     this.mousey = - (event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
     this.camera.rotation.x = this.mousey / this.scale;
     this.camera.rotation.y = this.mousex / this.scale;
-    // console.log(this.mousex);
+    this.serverService.changeCameraRotation({x: this.camera.rotation.x, y: this.camera.rotation.y});
   }
 
   @HostListener('window:resize', ['$event'])
@@ -309,6 +308,7 @@ export class GameComponent implements OnInit {
     // sockets
     serverService.on(this.EVENTS.LEAVE_GAME, (result: any) => this.onLeaveGame(result));
     serverService.on(this.EVENTS.SPEED_SHANGE, (result: any) => this.onSpeedChange(result));
+    serverService.on(this.EVENTS.INFO_ABOUT_THE_GAMERS, (data: any) => this.onChangeInfoAboutTheGamers(data));
 
     // инициализация игры
 
@@ -399,6 +399,14 @@ export class GameComponent implements OnInit {
 
   speedDown() {
     this.serverService.speedDown();
+  }
+
+  onChangeInfoAboutTheGamers(data: any) {
+    if(data) {
+      console.log("I see you");
+    } else {
+      console.log("Fuck");
+    }
   }
 
   onSpeedChange(data: any) {

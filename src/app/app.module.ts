@@ -17,7 +17,12 @@ import { RoomsComponent } from './rooms/rooms.component';
 import { SETTINGS } from './server/Settings';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 
-const config: SocketIoConfig = { url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`, options: {} };
+const config: SocketIoConfig = {
+  url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`,
+  options: {
+    withCredentials: true
+  }
+};
 
 @NgModule({
   declarations: [

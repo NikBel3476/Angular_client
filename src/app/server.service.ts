@@ -9,7 +9,7 @@ import { User } from './user';
 export class ServerService {
 
   constructor(private server: Server) {
-    
+
   }
 
   getEvents() {
@@ -30,7 +30,7 @@ export class ServerService {
     this.server.registration(user);
   }
 
-  sendMessage(message: String) {
+  sendMessage(message: string) {
     this.server.sendMessage(message);
   }
 
@@ -68,8 +68,12 @@ export class ServerService {
     this.server.stopMove();
   }
 
-  changeDirection(x: number, y: number) {
-    this.server.changeDireciton(x, y);
+  changePosition( position: object ) {
+    this.server.changePosition( position );
+  }
+
+  changeCameraRotation(rotationParams: object) {
+    this.server.changeCameraRotation(rotationParams);
   }
 
   getNames() {
