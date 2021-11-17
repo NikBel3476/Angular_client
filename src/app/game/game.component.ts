@@ -4,7 +4,7 @@ import { CookieService } from 'ngx-cookie-service';
 import * as THREE from 'three';
 import * as Stats from 'stats.js';
 import { ServerService } from '../server.service';
-import { Direction } from '../Enum';
+import { Direction } from '../Direction';
 
 @Component({
   selector: 'app-game',
@@ -25,7 +25,7 @@ export class GameComponent implements OnInit {
   cameraDirection = new THREE.Vector3(0, 0, 0);
   stats = new Stats();
   //Начальные данные для камеры
-  scale = 0.3;
+  scale = 0.4;
   mousex = 0;
   mousey = 0;
   //Константа для движения
@@ -66,21 +66,13 @@ export class GameComponent implements OnInit {
 
 
   plane1 = this.createPlane({ x: 0, y: 15, z: -30 }, { l: 50, h: 50, b: 10 }, "#FFFFFF"); //Передняя
-
   plane2 = this.createPlane({ x: -30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }); //Левая
-
   plane3 = this.createPlane({ x: 30, y: 15, z: 0 }, { l: 10, h: 60, b: 100 }, '#FF00FF'); //Правая
-
   plane4 = this.createPlane({ x: 0, y: 45, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB'); //Верхняя
-
   plane5 = this.createPlane({ x: 0, y: -15, z: 0 }, { l: 50, h: 10, b: 100 }, '#BB00BB'); //Нижняя
-
   plane6 = this.createPlane({ x: 0, y: 15, z: 45 }, { l: 50, h: 50, b: 10 }, "#FFFF00"); //Задняя
-
-
  /*  plane7 = this.createPlane({ x: 25, y: 45, z: 50 }, { l: 2, h: 2, b: 2 }, "#FF0000");
   plane8 = this.createPlane({ x: 25, y: 45, z: -50 }, { l: 2, h: 2, b: 2 }, "#000000"); */
-
 
   cube = this.createCube();
   sphere = this.createSphere();
@@ -99,7 +91,6 @@ export class GameComponent implements OnInit {
   ];
 
   EVENTS = this.serverService.getEvents();
-
   room: string = "";
 
   // выйти из игры при обновлении страницы
@@ -137,32 +128,58 @@ export class GameComponent implements OnInit {
     }
   }
 
+  @HostListener('document:keyup', ['$event'])
+  keyUp(event: KeyboardEvent) {
+    switch (event.key) {
+      case 'w':
+        this.serverService.stopMove();
+        break;
+      case 'a':
+        this.serverService.stopMove();
+        break;
+      case 's':
+        this.serverService.stopMove();
+        break;
+      case 'd':
+        this.serverService.stopMove();
+        break;
+    }
+  }
+
+  @HostListener('document:mousemove', ['$event'])
+  mouseMove(event: MouseEvent) {
+    this.camera.rotation.order = "YXZ";
+    this.mousex = -event.clientX / this.renderer.domElement.clientWidth * 2 + 1;
+    this.mousey = -event.clientY / this.renderer.domElement.clientHeight * 2 + 1;
+    this.camera.rotation.x = this.mousey / this.scale;
+    this.camera.rotation.y = this.mousex / this.scale;
+    this.serverService.changeCameraRotation(this.camera.rotation);
+    const vect = new THREE.Vector3();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  resize() {
+    this.onWindowResize();
+  }
+
   move(direction: Direction) {
     switch (direction) {
       case Direction.Forward: {
-        /* this.camera.position.x -= this.constMove * Math.sin(Math.PI * this.mousex);
-        this.camera.position.z -= this.constMove * Math.cos(Math.PI * this.mousex); */
         this.nextCameraPosition.x -= this.constMove * Math.sin(Math.PI * this.mousex);
         this.nextCameraPosition.z -= this.constMove * Math.cos(Math.PI * this.mousex);
         break;
       }
       case Direction.Back: {
-        /* this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex);
-        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex); */
         this.nextCameraPosition.x += this.constMove * Math.sin(Math.PI * this.mousex);
         this.nextCameraPosition.z += this.constMove * Math.cos(Math.PI * this.mousex);
         break;
       }
       case Direction.Right: {
-        /* this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex + Math.PI / 2);
-        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex + Math.PI / 2); */
         this.nextCameraPosition.x += this.constMove * Math.sin(Math.PI * this.mousex + Math.PI / 2);
         this.nextCameraPosition.z += this.constMove * Math.cos(Math.PI * this.mousex + Math.PI / 2);
         break;
       }
       case Direction.Left: {
-        /* this.camera.position.x += this.constMove * Math.sin(Math.PI * this.mousex - Math.PI / 2);
-        this.camera.position.z += this.constMove * Math.cos(Math.PI * this.mousex - Math.PI / 2); */
         this.nextCameraPosition.x += this.constMove * Math.sin(Math.PI * this.mousex - Math.PI / 2);
         this.nextCameraPosition.z += this.constMove * Math.cos(Math.PI * this.mousex - Math.PI / 2);
         break;
@@ -187,8 +204,6 @@ export class GameComponent implements OnInit {
 
   }
 
-
-
   analyze(nowPosition: any, nextPosition: any) {
     let result = false;
     for (let i = 0; i < this.arrayAnalyze.length; i++) {
@@ -206,88 +221,52 @@ export class GameComponent implements OnInit {
           result = true;
           break;
         }
-      };
-    };
+      }
+    }
     return result;
   }
 
-
-
-  calcCos(vect1: any, vect2: any): any {
+  calcCos(vect1: { x: number, y: number, z: number }, vect2: { x: number, y: number, z: number}): number {
     return this.scalMultForCos(vect1, vect2) / (this.vectModuleForCos(vect1) * this.vectModuleForCos(vect2));
   }
 
-  scalMultForCos(vect1: any, vect2: any) {
+  scalMultForCos(vect1: any, vect2: any): number {
     return vect1.x * vect2.x + vect1.z * vect2.z;
   }
 
-  scalMult(vect1: any, vect2: any) {
+  scalMult(vect1: any, vect2: any): number {
     return vect1.x * vect2.x + vect1.y * vect2.y + vect1.z * vect2.z;
   }
 
-  vectMult(vect1: any, vect2: any) {
+  vectMult(vect1: any, vect2: any): { x: number, y: number, z: number } {
     let x = vect1.y * vect2.z - vect1.z * vect2.y;
     let y = vect1.z * vect2.x - vect1.x * vect2.z;
     let z = vect1.x * vect2.y - vect1.y * vect2.x;
     return { x, y, z };
   }
 
-  multVectNum(vect: any, num: any) {
+  multVectNum(vect: any, num: any): { x: number, y: number, z: number } {
     return { x: vect.x * num, y: vect.y * num, z: vect.z * num };
   }
 
-  divVectNum(vect: any, num: any) {
+  divVectNum(vect: any, num: any): { x: number, y: number, z: number } {
     return { x: vect.x / num, y: vect.y / num, z: vect.z / num };
   }
 
-  sumVect(vect1: any, vect2: any) {
+  sumVect(vect1: any, vect2: any): { x: number, y: number, z: number } {
     return { x: vect1.x + vect2.x, y: vect1.y + vect2.y, z: vect1.z + vect2.z };
   }
 
-  subVect(vect1: any, vect2: any) {
+  subVect(vect1: any, vect2: any): { x: number, y: number, z: number } {
     return { x: vect1.x - vect2.x, y: vect1.y - vect2.y, z: vect1.z - vect2.z };
   }
 
-  vectModuleForCos(vect: any) {
+  vectModuleForCos(vect: any): number {
     return Math.sqrt(vect.x ** 2 + vect.z ** 2);
   }
 
-  vectModule(vect: any) {
+  vectModule(vect: any): number {
     return Math.sqrt(vect.x ** 2 + vect.y ** 2 + vect.z ** 2);
-  }
-
-
-  @HostListener('document:keyup', ['$event'])
-  keyUp(event: KeyboardEvent) {
-    switch (event.key) {
-      case 'w':
-        this.serverService.stopMove();
-        break;
-      case 'a':
-        this.serverService.stopMove();
-        break;
-      case 's':
-        this.serverService.stopMove();
-        break;
-      case 'd':
-        this.serverService.stopMove();
-        break;
-    }
-  }
-
-  @HostListener('document:mousemove', ['$event'])
-  mouseMove(event: MouseEvent) {
-    this.camera.rotation.order = "YXZ"; // this is not the default
-    this.mousex = - (event.clientX / this.renderer.domElement.clientWidth) * 2 + 1;
-    this.mousey = - (event.clientY / this.renderer.domElement.clientHeight) * 2 + 1;
-    this.camera.rotation.x = this.mousey / this.scale;
-    this.camera.rotation.y = this.mousex / this.scale;
-    this.serverService.changeCameraRotation({x: this.camera.rotation.x, y: this.camera.rotation.y});
-  }
-
-  @HostListener('window:resize', ['$event'])
-  resize(event: any) {
-    this.onWindowResize();
   }
 
   onWindowResize(): void {
@@ -311,7 +290,6 @@ export class GameComponent implements OnInit {
     serverService.on(this.EVENTS.INFO_ABOUT_THE_GAMERS, (data: any) => this.onChangeInfoAboutTheGamers(data));
 
     // инициализация игры
-
     // renderer
     this.renderer = new THREE.WebGLRenderer();
 
@@ -326,11 +304,9 @@ export class GameComponent implements OnInit {
     !this.cookieService.get('token') ? this.router.navigate(['authorization']) : null;
     !this.cookieService.get('game') ? this.router.navigate(['rooms']) : null;
 
-
     // scene initialization
-
     //create the scene
-    this.scene.background = new THREE.Color(0xbfd1e5);
+    this.scene.background = new THREE.Color("#bfd1e5");
 
     //create camera
     this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.2, 5000);
@@ -352,17 +328,14 @@ export class GameComponent implements OnInit {
     this.scene.add(dirLight);
 
     dirLight.castShadow = true;
-
     dirLight.shadow.mapSize.width = 2048;
     dirLight.shadow.mapSize.height = 2048;
 
     let d = 50;
-
     dirLight.shadow.camera.left = -d;
     dirLight.shadow.camera.right = d;
     dirLight.shadow.camera.top = d;
     dirLight.shadow.camera.bottom = -d;
-
     dirLight.shadow.camera.far = 13500;
 
     //Setup the renderer
@@ -381,27 +354,26 @@ export class GameComponent implements OnInit {
     this.animate();
   }
 
-  leaveGame() {
+  leaveGame(): void {
     this.serverService.leaveGame();
   }
 
-  onLeaveGame(data: any) {
+  onLeaveGame(data: any): void {
     if (data.result) {
       this.cookieService.get('game') ? this.cookieService.delete('game') : null;
       this.router.navigate(['rooms']);
     }
   }
 
-
-  speedUp() {
+  speedUp(): void {
     this.serverService.speedUp();
   }
 
-  speedDown() {
+  speedDown(): void {
     this.serverService.speedDown();
   }
 
-  onChangeInfoAboutTheGamers(data: any) {
+  onChangeInfoAboutTheGamers(data: any): void {
     if(data) {
       console.log("I see you");
     } else {
@@ -409,21 +381,17 @@ export class GameComponent implements OnInit {
     }
   }
 
-  onSpeedChange(data: any) {
+  onSpeedChange(data: any): void {
     if (data.result == 'up') {
       this.constMove += 0.5;
-    };
+    }
     if (data.result == 'down' && this.constMove > 0.5) {
       this.constMove -= 0.5;
     }
   }
 
-  controlAnalyze() {
-    if (this.switchWalkingThroughWalls) {
-      this.switchWalkingThroughWalls = false;
-    } else {
-      this.switchWalkingThroughWalls = true;
-    }
+  controlAnalyze(): void {
+    this.switchWalkingThroughWalls = !this.switchWalkingThroughWalls;
     console.log(this.switchWalkingThroughWalls);
     this.camera.position.x = 0;
     this.camera.position.z = 0;
@@ -431,9 +399,7 @@ export class GameComponent implements OnInit {
     this.nextCameraPosition.z = 0;
   }
 
-
-
-  addLight() {
+  addLight(): void {
     this.renderer.shadowMap.enabled = true;
     const light = new THREE.DirectionalLight(0xffffff, 0.75);
     light.shadow.autoUpdate = true;
@@ -450,16 +416,16 @@ export class GameComponent implements OnInit {
     // this.scene.add( helper );
   }
 
-  addAmbientLight() {
+  addAmbientLight(): void {
     const light = new THREE.AmbientLight(0xffffff, 0.25);
     this.scene.add(light);
   }
 
-  initElems() {
+  initElems(): void {
     this.sceneElems.forEach(elem => this.scene.add(elem));
   }
 
-  createCube() {
+  createCube(): THREE.Mesh<THREE.TorusGeometry, THREE.MeshStandardMaterial> {
     const geometry = new THREE.TorusGeometry(1.5, 0.5, 8, 20);
     const material = new THREE.MeshStandardMaterial({
       color: 0xfcc742,
@@ -474,7 +440,7 @@ export class GameComponent implements OnInit {
     return cube;
   }
 
-  createSphere() {
+  createSphere(): THREE.Mesh<THREE.SphereGeometry, THREE.MeshPhongMaterial> {
     const geometry = new THREE.SphereGeometry(4, 50, 50);
     const material = new THREE.MeshPhongMaterial({
       color: 0x0da520,
@@ -488,27 +454,27 @@ export class GameComponent implements OnInit {
     return sphere;
   }
 
-  createPlane(coords = { x: 0, y: 0, z: 0 }, scale = { l: 0, h: 0, b: 0 }, color = '#FF0000') {
-
-    //threeJS Section
-    let blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: color }));
-
+  createPlane(
+    coords = { x: 0, y: 0, z: 0 },
+    scale = { l: 0, h: 0, b: 0 },
+    color = '#FF0000'
+  ): THREE.Mesh<THREE.BoxBufferGeometry, THREE.MeshPhongMaterial>
+  {
+    const blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: color }));
     blockPlane.position.set(coords.x, coords.y, coords.z);
     blockPlane.scale.set(scale.l, scale.h, scale.b);
-
     blockPlane.castShadow = true;
     blockPlane.receiveShadow = true;
-
     return blockPlane;
   }
 
-  createAxesHelper() {
+  createAxesHelper(): void {
     const axesHelper = new THREE.AxesHelper(15);
     this.scene.add(axesHelper);
   }
 
 
-  animate() {
+  animate(): void {
     this.stats.begin();
     this.sceneElems[0].rotation.x += 0.01;
     this.sceneElems[0].rotation.y += 0.01;
@@ -517,7 +483,7 @@ export class GameComponent implements OnInit {
     requestAnimationFrame(this.animate.bind(this));
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void {
     document.getElementById('gameScene')?.remove();
   }
 }

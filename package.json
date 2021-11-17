@@ -22,7 +22,7 @@
     "ngx-cookie-service": "^11.0.2",
     "ngx-socket-io": "^3.3.0",
     "rxjs": "^6.6.6",
-    "socket.io-client": "^4.0.0",
+    "socket.io-client": "^4.3.2",
     "stats.js": "^0.17.0",
     "three": "^0.126.1",
     "ts-md5": "^1.2.7",

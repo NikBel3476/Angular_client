@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
-import { Direction } from './Enum';
+import { Euler } from 'three';
+
+import { Direction } from './Direction';
 import { Server } from './server/Server';
-import { User } from './user';
+import { User } from './User';
 
 @Injectable({
   providedIn: 'root'
@@ -12,49 +14,52 @@ export class ServerService {
 
   }
 
-  getEvents() {
+  getEvents(): { [k: string]: string } {
     return this.server.getEvents();
   }
 
-  on(name: string, func: any){
+  on(name: string, func: any): void {
     this.server.on(name, func);
   }
 
   // АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
-  // -------------------------------
-  login(user: User) {
+  login(user: User): void {
     this.server.login(user);
   }
 
-  registration(user: User) {
+  registration(user: User): void {
     this.server.registration(user);
   }
 
-  sendMessage(message: string) {
+  checkAuth(): void {
+    this.server.checkAuth();
+  }
+
+  sendMessage(message: string): void {
     this.server.sendMessage(message);
   }
 
-  logout() {
+  logout(): void {
     this.server.logout();
   }
 
-  logoutAllUsers(secretWord: string) {
+  logoutAllUsers(secretWord: string): void {
     this.server.logoutAllUsers(secretWord);
   }
 
-  createRoom(roomName: string) {
+  createRoom(roomName: string): void {
     this.server.createRoom(roomName);
   }
 
-  joinGame(roomName: string) {
+  joinGame(roomName: string): void {
     this.server.joinGame(roomName);
   }
 
-  leaveGame() {
+  leaveGame(): void {
     this.server.leaveGame();
   }
 
-  getRooms() {
+  getRooms(): void {
     this.server.getGames();
   }
 
@@ -68,29 +73,27 @@ export class ServerService {
     this.server.stopMove();
   }
 
-  changePosition( position: object ) {
+  changePosition(position: object): void {
     this.server.changePosition( position );
   }
 
-  changeCameraRotation(rotationParams: object) {
+  changeCameraRotation(rotationParams: Euler): void {
     this.server.changeCameraRotation(rotationParams);
   }
 
-  getNames() {
+  getNames(): void {
     this.server.getNames();
   }
 
-
-  speedUp() {
+  speedUp(): void {
     this.server.speedUp();
   }
 
-  speedDown() {
+  speedDown(): void {
     this.server.speedDown();
   }
 
-  changePassword(login: string, oldPassword: string, newPassword: string) {
+  changePassword(login: string, oldPassword: string, newPassword: string): void {
     this.server.changePassword(login, oldPassword, newPassword);
   }
-
 }

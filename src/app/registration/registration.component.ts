@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ServerService } from '../server.service';
 
-import { User } from '../user';
+import { User } from '../User';
 
 @Component({
   selector: 'app-registration',

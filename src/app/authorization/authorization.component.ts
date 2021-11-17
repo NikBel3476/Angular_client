@@ -3,7 +3,7 @@ import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ServerService } from '../server.service';
 
-import { User } from '../user';
+import { User } from '../User';
 
 @Component({
   selector: 'app-authorization',
@@ -11,6 +11,8 @@ import { User } from '../user';
   styleUrls: ['./authorization.component.css'],
 })
 export class AuthorizationComponent implements OnInit {
+
+  HOUR: number = 60 * 60 * 1000;
 
   user: User = {
     login: '',
@@ -24,11 +26,12 @@ export class AuthorizationComponent implements OnInit {
     private serverService: ServerService,
     private cookieService: CookieService
   ) {
-    serverService.on(this.EVENTS.LOGIN, (data: any) => this.onGetToken(data))
+    serverService.on(this.EVENTS.LOGIN, (data: { result: boolean, token: string }) => this.onAuthComplete(data))
   }
 
   ngOnInit(): void {
-    // this.cookieService.get('token') ? this.serverService.login(this.user) : null;
+    this.serverService.checkAuth();
+
   }
 
   authorization(): void {
@@ -36,9 +39,9 @@ export class AuthorizationComponent implements OnInit {
     delete this.user.password;
   }
 
-  onGetToken(data: any): void {
-    if (data.result && typeof data.token === 'string') {
-      this.cookieService.set('token', data.token);
+  onAuthComplete(data: { result: boolean, token: string}): void {
+    if (data.result) {
+      this.cookieService.set('token', data.token, new Date(Date.now() + this.HOUR));
       this.router.navigate(['rooms']);
     }
   }
