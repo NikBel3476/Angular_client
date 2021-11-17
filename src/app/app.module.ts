@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
 import { CookieService } from 'ngx-cookie-service';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -17,12 +16,6 @@ import { RoomsComponent } from './rooms/rooms.component';
 import { SETTINGS } from './server/Settings';
 import { ChangePasswordComponent } from './change-password/change-password.component';
 
-const config: SocketIoConfig = {
-  url: `${SETTINGS.HOST}:${SETTINGS.PORT}/`,
-  options: {
-    withCredentials: true
-  }
-};
 
 @NgModule({
   declarations: [
@@ -40,7 +33,6 @@ const config: SocketIoConfig = {
     BrowserModule,
     AppRoutingModule,
     FormsModule,
-    SocketIoModule.forRoot(config),
     RouterModule.forRoot([
       {path: 'game', component: GameComponent},
       {path: 'authorization', component: AuthorizationComponent},

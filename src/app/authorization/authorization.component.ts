@@ -26,12 +26,14 @@ export class AuthorizationComponent implements OnInit {
     private serverService: ServerService,
     private cookieService: CookieService
   ) {
-    serverService.on(this.EVENTS.LOGIN, (data: { result: boolean, token: string }) => this.onAuthComplete(data))
+    serverService.on(this.EVENTS.LOGIN, (data: { result: boolean, token: string }) => this.onAuthComplete(data));
   }
 
   ngOnInit(): void {
     this.serverService.checkAuth();
-
+    if (this.cookieService.get('token') && this.serverService.getSocketStatus()) {
+      this.router.navigate(['rooms']);
+    }
   }
 
   authorization(): void {

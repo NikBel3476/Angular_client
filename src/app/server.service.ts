@@ -18,6 +18,10 @@ export class ServerService {
     return this.server.getEvents();
   }
 
+  getSocketStatus(): 'connected' | 'disconnected' {
+    return this.server.socketStatus;
+  }
+
   on(name: string, func: any): void {
     this.server.on(name, func);
   }

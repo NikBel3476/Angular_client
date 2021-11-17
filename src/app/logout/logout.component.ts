@@ -22,9 +22,10 @@ export class LogoutComponent implements OnInit {
 
   ngOnInit(): void {
   }
-  
+
   logout() {
     this.serverService.logout();
+    this.cookieSevice.delete('token');
   }
 
   onLogout(result: any) {

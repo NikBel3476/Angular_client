@@ -12,7 +12,7 @@ import { Direction } from '../Direction';
 })
 export class Server {
   socket: Socket
-  socketStatus: 'connected' | 'disconnected' = 'connected';
+  socketStatus: 'connected' | 'disconnected' = 'disconnected';
   events: { [k: string]: Function[] } = {};
 
   constructor(
