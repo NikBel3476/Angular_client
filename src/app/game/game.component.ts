@@ -458,9 +458,9 @@ export class GameComponent implements OnInit {
     coords = { x: 0, y: 0, z: 0 },
     scale = { l: 0, h: 0, b: 0 },
     color = '#FF0000'
-  ): THREE.Mesh<THREE.BoxBufferGeometry, THREE.MeshPhongMaterial>
+  ): THREE.Mesh<THREE.BufferGeometry, THREE.MeshPhongMaterial>
   {
-    const blockPlane = new THREE.Mesh(new THREE.BoxBufferGeometry(), new THREE.MeshPhongMaterial({ color: color }));
+    const blockPlane = new THREE.Mesh(new THREE.BufferGeometry(), new THREE.MeshPhongMaterial({ color: color }));
     blockPlane.position.set(coords.x, coords.y, coords.z);
     blockPlane.scale.set(scale.l, scale.h, scale.b);
     blockPlane.castShadow = true;
